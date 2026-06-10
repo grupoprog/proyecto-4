@@ -20,6 +20,14 @@
 # -------------------------------------------------------------------------------------------------------------------
 import streamlit as st
 
+def fechaAtupla(fecha):
+    '''str -> tuple[int,int,int,int] '''
+    tupla=(,)
+	fecha[0:4] =tupla[0] 
+    fecha[5:7] =tupla[1] 
+    fecha[8:10] =tupla[2] 
+    fecha[11:13] =tupla[3] 
+    return tupla
 
 def procesar_archivo(nombre: str) -> list[dict]:
     '''
