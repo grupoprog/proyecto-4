@@ -22,12 +22,46 @@ import streamlit as st
 
 def fechaAtupla(fecha):
     '''str -> tuple[int,int,int,int] '''
-    tupla=(,)
-	fecha[0:4] =tupla[0] 
-    fecha[5:7] =tupla[1] 
-    fecha[8:10] =tupla[2] 
-    fecha[11:13] =tupla[3] 
-    return tupla
+	anio = int(fecha[0:4])
+    mes = int(fecha[5:7])
+    dia = int(fecha[8:10])
+    hora = int(fecha[11:13]) 
+
+    return (anio,mes,dia,hora)
+
+def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -> dict:
+    valor = valores[indice]
+
+    if atributo == "Timestamp":
+        linea[atributo] = fechaAtupla(valor)
+
+    elif atributo == "Latitude" or atributo == "Longitude" or atributo == "PM10_ug_m3" or atributo == "PM2_5_ug_m3" or 
+         atributo == "Nitrogen_Dioxide_ug_m3" or atributo == "UV_Index":
+        linea[atributo] = float(valor)
+
+    elif atributo == "Carbon_Monoxide_ug_m3" or atributo == "Ozone_ug_m3" or atributo == "Dust_ug_m3" or atributo == "European_AQI" or 
+         atributo == "Hazardous_Event" or atributo == "UV_Index":
+         linea[atributo] = int(valor)
+    
+    else: 
+        linea[atributo] = valor
+    
+    return linea
+
+
+def crear_linea(identificadores: list[str], valores: list[str]) -> dict:
+    '''
+    Dado una lista de atributos y una lista de valores, devuelve una 
+    linea de la tabla cuyos valores están en 
+    '''
+    linea = {}
+    i = 0
+    for atributo in identificadores:
+        linea = agregar_valor(linea,atributo,valores,i)
+        i += 1
+    
+    return linea
+
 
 def procesar_archivo(nombre: str) -> list[dict]:
     '''
@@ -41,12 +75,8 @@ def procesar_archivo(nombre: str) -> list[dict]:
     identificadores = archivo.readline().rstrip("\n").split(",")     # obtengo los identificadores
     datos = []
     for linea in archivo:          
-        dic = {}
         valores = linea.rstrip("\n").split(",")
-        count = 0                  #contador para vincular cada dato a su respectivo identificador
-        for atributo in identificadores:
-            dic[atributo] = valores[count]
-            count += 1
+        crear_linea(identificador, valores)
         datos.append(dic)
 
     archivo.close()
