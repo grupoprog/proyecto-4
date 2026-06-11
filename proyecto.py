@@ -101,10 +101,10 @@ def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
     Representamos a las "Ciudades filtradas" como diccionarios 
     de la forma {ciudad: [cantidad de veces encontrada, suma de indices de polvo]}. 
     donde la cantidad de veces que se encontro en la tabla es un int > 0 y la suma
-    de los indices de polvo es un float > 0.
+    de los indices de polvo es un float >= 0.
 
     representamos los promedios de polvo de las ciudades (ciudades_promedios) como diccionarios de la forma
-    {ciudad: promedio_polvo}. donde promedio_polvo es un float > 0
+    {ciudad: promedio_polvo}. donde promedio_polvo es un float >= 0
 
     ciudades_filtradas -> ciudades_promedios
 
@@ -124,8 +124,9 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     '''
     Representamos los promedios de polvo de las ciudades (ciudades_promedios) como
     diccionarios de la forma {ciudad: promedio_polvo}. donde promedio_polvo es un float > 0
-
     Y los mayores promedios 
+
+    Recibe los promedio de polvo y produce los 5 mayores promedios de polvo ordenados de mayor a menor
     '''
     nuevo_dic = {"ciudades":[], "promedios":[]}
     
@@ -150,7 +151,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     return nuevo_dic
 
 
-def filtrar_por_año(tabla: list[dict], anio: int) -> dict[str: list]:
+def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
     representaremos los "mayores promedios" de las ciudades como
     dicccionarios de la forma {"ciudades": [nombres_ciudades], "Promedio": [promedios_polvo]}. 
@@ -182,19 +183,26 @@ def filtrar_por_año(tabla: list[dict], anio: int) -> dict[str: list]:
     return mayores_promedios(ciudades_promedios)
 
 
+def ejecutar_programa(tabla: list[dict]):
+    '''
+    Dada la tabla del dataset genera un link a la pagina web
+    '''
+    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
+    st.table(pregunta_1(tabla, 2025))
+
+
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
     tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
     #tabla = procesar_archivo("tabla_para_tests.csv")
-    #print(filtrar_por_año(tabla, 2025))
+    #print(pregunta_1(tabla, 2025))
     #ejemplo para tabla:
     #ejemplo = [{"Nombre": "Pedrito", "Edad":14, "Le gusta jugar?":"si"},
     #{"Nombre": "Ramon", "Edad":66, "Le gusta jugar?":"no"},
     #{"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
     #con la siguiente funcion ya se ve una tabla en la pagina
     #st.table(ejemplo)
-    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
-    st.table(filtrar_por_año(tabla, 2025))
+    ejecutar_programa(tabla)
 
 
 if __name__ == "__main__":
