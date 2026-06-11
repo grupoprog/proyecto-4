@@ -106,10 +106,11 @@ def mayores_promedios(dic):
         if len(nuevo_dic["ciudades"]) < 5:
             nuevo_dic["ciudades"].append(e)
             nuevo_dic["promedios"].append(dic[e])
-            print(nuevo_dic["promedios"])
+            #print(nuevo_dic["promedios"])
         else:
+            count = 0
             for el in nuevo_dic["promedios"]:
-                count = 0
+                
                 if dic[e] > el and not flag:
                     nuevo_dic["promedios"]=nuevo_dic["promedios"][0:count]+ [dic[e]] + nuevo_dic["promedios"][count:4]
                     nuevo_dic["ciudades"]=nuevo_dic["ciudades"][0:count]+ [e] + nuevo_dic["ciudades"][count:4]
@@ -126,12 +127,12 @@ def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
     lista_nueva = {}
     
     for e in tabla:
-        if  e["Timestamp"][:4] == año:
+        if  e["Timestamp"][0] == año:
             if e["City"] in lista_nueva:
                 lista_nueva[e["City"]][0] += 1
-                lista_nueva[e["City"]][1] += float(e["Dust_ug_m3"])
+                lista_nueva[e["City"]][1] += e["Dust_ug_m3"]
             else:
-                lista_nueva[e["City"]]=[1,float(e["Dust_ug_m3"])]
+                lista_nueva[e["City"]]=[1,e["Dust_ug_m3"]]
 
             #lista_nueva.append(e)
     return mayores_promedios(promedio(lista_nueva))
@@ -141,9 +142,9 @@ def pregunta_1():
     st.title("")
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
-    #tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
-    tabla = procesar_archivo("tabla_para_tests.csv")
-    print(filtrar_por_año(tabla, "2025"))
+    tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
+    #tabla = procesar_archivo("tabla_para_tests.csv")
+    print(filtrar_por_año(tabla, 2025))
     # ejemplo para tabla:
     #ejemplo = [{"Nombre": "Pedrito", "Edad":14, "Le gusta jugar?":"si"},
     #{"Nombre": "Ramon", "Edad":66, "Le gusta jugar?":"no"},
