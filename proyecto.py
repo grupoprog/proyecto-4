@@ -21,7 +21,15 @@
 import streamlit as st
 
 def fechaAtupla(fecha):
-    '''str -> tuple[int,int,int,int] '''
+    '''str -> tuple[int,int,int,int] 
+
+    dada una fecha en forma de string, devuelve una tupla de la forma (Año,Mes,Dia,Hora)
+    
+    ejemplos:
+    fechaAtupla("2025-10-02T06:00")==(2025,10,2,6)
+    fechaAtupla("2026-02-15T13:00")==(2026,2,15,13)
+    fechaAtupla("2025-09-30T23:00")==(2025,9,30,23)
+    '''
 	anio = int(fecha[0:4])
     mes = int(fecha[5:7])
     dia = int(fecha[8:10])
@@ -30,6 +38,11 @@ def fechaAtupla(fecha):
     return (anio,mes,dia,hora)
 
 def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -> dict:
+    '''Dada una fila de la tabla (un diccionario), un atributo, una lista de valores y un índice, devuelve un diccionario.
+    Si el atributo recibido es el tiempo, convierte el valor asociado en el diccionario (la string) a una tupla. 
+    Si el atributo es latitud, longitud, PM 10, PM 2.5, dióxido de nitrógeno o índice UV, convierte el valor asociado en el diccionario (la string) a float. 
+    Si el atributo es monóxido de carbono, ozono, polvo, European AQI o hazardous events, convierte el valor asociado en el diccionario (la string) a int.
+'''
     valor = valores[indice]
 
     if atributo == "Timestamp":
