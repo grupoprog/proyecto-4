@@ -27,7 +27,7 @@ def fechaAtupla(fecha: str) -> tuple:
     
     Dada una fecha como string, devuelve la misma fecha pasada a tupla.
 
-    fechaAtupla("2025-10-02T06:00")==(2025,10,2,6)
+    fechaAtupla("2025-10-02T06:00") == (2025,10,2,6)
     '''
     anio = int(fecha[0:4])
     mes = int(fecha[5:7])
@@ -38,12 +38,13 @@ def fechaAtupla(fecha: str) -> tuple:
 
 
 def agregar_valor(fila: dict, atributo: str, valores: list[str], indice: int) -> dict:
-    '''Dada una fila de la tabla (un diccionario), un atributo, una lista de valores y un índice, devuelve un diccionario.
+    '''
+    Dada una fila de la tabla (un diccionario), un atributo, una lista de valores y un índice, devuelve un diccionario.
     Si el atributo recibido es el tiempo, convierte el valor asociado en el diccionario (la string) a una tupla. 
     Si el atributo es la ciudad, el valor asociado en el diccionario queda como str.
     Si el atributo es European AQI o hazardous events, convierte el valor asociado en el diccionario (la string) a int.
     Si el atributo es otro, convierte el valor asociado en el diccionario (la string) a float.
-'''
+    '''
     valor = valores[indice]
 
     if atributo == "Timestamp":
@@ -61,94 +62,135 @@ def agregar_valor(fila: dict, atributo: str, valores: list[str], indice: int) ->
     return fila
 
 
-def crear_fila(identificadores: list[str], valores: list[str]) -> dict:
+def crear_fila(atributos: list[str], valores: list[str]) -> dict:
     '''
-    Dado una lista de atributos y una lista de valores, devuelve una 
-    fila de la tabla cuyos valores están en 
+    Dado una lista de atributos y una lista de valores, devuelve la 
+    fila de la tabla.
     '''
     fila = {}
     i = 0
-    for atributo in identificadores:
+    for atributo in atributos:
         fila = agregar_valor(fila,atributo,valores,i)
         i += 1
     
     return fila
 
 
-def procesar_archivo(nombre: str) -> list[dict]:
+def procesar_archivo(nombre_archivo: str) -> list[dict]:
     '''
-    archivo: string
+    nombre_archivo: string
 
     archivo -> tabla
 
-    Recibe el nombre del archivo y produce una tabla con las entradas.
+    Recibe el nombre del archivo y produce una tabla.
     '''
-    archivo = open(nombre)
-    identificadores = archivo.readline().rstrip("\n").split(",")     # obtengo los identificadores
-    datos = []
-    for fila in archivo:          
-        valores = fila.rstrip("\n").split(",")
-        fila = crear_fila(identificadores, valores)
-        datos.append(fila)
+    archivo = open(nombre_archivo)
+    atributos = archivo.readline().rstrip("\n").split(",")
+    tabla = []
+    for linea in archivo:          
+        valores = linea.rstrip("\n").split(",")
+        fila = crear_fila(atributos, valores)
+        tabla.append(fila)
 
     archivo.close()
-    return datos
+    return tabla
 
-def promedio(dic):
-    for e in dic:
-        dic[e]=dic[e][1]/dic[e][0]
-    return dic
-def mayores_promedios(dic):
-    nuevo_dic={"ciudades":[],
-                "promedios":[]}
-    for e in dic:
+
+def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
+    '''
+    Representamos a las "Ciudades filtradas" como diccionarios 
+    de la forma {ciudad: [cantidad de veces encontrada, suma de indices de polvo]}. 
+    donde la cantidad de veces que se encontro en la tabla es un int > 0 y la suma
+    de los indices de polvo es un float > 0.
+
+    representamos los promedios de polvo de las ciudades (ciudades_promedios) como diccionarios de la forma
+    {ciudad: promedio_polvo}. donde promedio_polvo es un float > 0
+
+    ciudades_filtradas -> ciudades_promedios
+
+    Dado un diccionario con las ciudades filtradas, devuelve un diccionario
+    con las ciudades y sus promedios de polvo.
+    '''
+    for ciudad in ciudades_filtradas:
+        cant_encuentros = ciudades_filtradas[ciudad][0]
+        sum_ind_polvo = ciudades_filtradas[ciudad][1]
+
+        ciudades_filtradas[ciudad] = sum_ind_polvo / cant_encuentros
+
+    return ciudades_filtradas
+
+
+def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
+    '''
+    Representamos los promedios de polvo de las ciudades (ciudades_promedios) como
+    diccionarios de la forma {ciudad: promedio_polvo}. donde promedio_polvo es un float > 0
+
+    Y los mayores promedios 
+    '''
+    nuevo_dic = {"ciudades":[], "promedios":[]}
+    
+    for ciudad in ciudades_promedios:
         flag = False
-        if len(nuevo_dic["ciudades"]) < 5:
-            nuevo_dic["ciudades"].append(e)
-            nuevo_dic["promedios"].append(dic[e])
-            #print(nuevo_dic["promedios"])
+        cant_ciudades = len(nuevo_dic["ciudades"])
+
+        if cant_ciudades < 5:
+            nuevo_dic["ciudades"].append(ciudad)
+            nuevo_dic["promedios"].append(ciudades_promedios[ciudad])
+            
         else:
             count = 0
-            for el in nuevo_dic["promedios"]:
+            for promedio in nuevo_dic["promedios"]:
                 
-                if dic[e] > el and not flag:
-                    nuevo_dic["promedios"]=nuevo_dic["promedios"][0:count]+ [dic[e]] + nuevo_dic["promedios"][count:4]
-                    nuevo_dic["ciudades"]=nuevo_dic["ciudades"][0:count]+ [e] + nuevo_dic["ciudades"][count:4]
+                if ciudades_promedios[ciudad] > promedio and not flag:
+                    nuevo_dic["promedios"] = nuevo_dic["promedios"][0:count] + [ciudades_promedios[ciudad]] + nuevo_dic["promedios"][count:4]
+                    nuevo_dic["ciudades"] = nuevo_dic["ciudades"][0:count] + [ciudad] + nuevo_dic["ciudades"][count:4]
                     flag = True
                 count += 1
+
     return nuevo_dic
 
-def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
-    """
-    tabla entero -> tabla
+
+def filtrar_por_año(tabla: list[dict], anio: int) -> dict[str: list]:
+    '''
+    representaremos los "mayores promedios" de las ciudades como
+    dicccionarios de la forma {"ciudades": [nombres_ciudades], "Promedio": [promedios_polvo]}. 
+    Donde las "nombres_ciudades" son strings y "promedios_polvo" son int. Ambas listas 
+    son de 5 elementos
+
+    tabla int -> mayores promedios
     
-    Recibe una tabla y un año, y produce una tabla con todas las entradas coincidentes a ese año
-    """
-    lista_nueva = {}
+    Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades con mayor promedio
+    de indice de polvo.
+    '''
+    ciudades_filtradas = {}
     
     for fila in tabla:
         anio_fecha = fila["Timestamp"][0]
-        if anio_fecha == año:
-            ciudad = fila["City"]
-            if ciudad in lista_nueva:
-                lista_nueva[ciudad][0] += 1
-                lista_nueva[ciudad][1] += e["Dust_ug_m3"]
-            else:
-                lista_nueva[ciudad]=[1,e["Dust_ug_m3"]]
+        ciudad = fila["City"]
+        ind_polvo = fila["Dust_ug_m3"]
 
-            #lista_nueva.append(e)
-    return mayores_promedios(promedio(lista_nueva))
+        if anio_fecha == anio:
+
+            if ciudad in ciudades_filtradas:
+                ciudades_filtradas[ciudad][0] += 1
+                ciudades_filtradas[ciudad][1] += ind_polvo
+            else:
+                ciudades_filtradas[ciudad] = [1,ind_polvo]
+
+    ciudades_promedios = promedio(ciudades_filtradas)
+            
+    return mayores_promedios(ciudades_promedios)
 
 
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
     tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
     #tabla = procesar_archivo("tabla_para_tests.csv")
-    print(filtrar_por_año(tabla, 2025))
-    # ejemplo para tabla:
+    #print(filtrar_por_año(tabla, 2025))
+    #ejemplo para tabla:
     #ejemplo = [{"Nombre": "Pedrito", "Edad":14, "Le gusta jugar?":"si"},
     #{"Nombre": "Ramon", "Edad":66, "Le gusta jugar?":"no"},
-   # {"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
+    #{"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
     #con la siguiente funcion ya se ve una tabla en la pagina
     #st.table(ejemplo)
     st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
