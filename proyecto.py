@@ -25,10 +25,9 @@ def fechaAtupla(fecha: str) -> tuple:
     '''
     str -> tuple[int,int,int,int]
     
-    Dada una fecha como string, devuelve la misma fecha 
-    pasada a tupla.
+    Dada una fecha como string, devuelve la misma fecha pasada a tupla.
 
-    fechaAtupla("2025-10-02 6:00")
+    fechaAtupla("2025-10-02T06:00")==(2025,10,2,6)
     '''
     anio = int(fecha[0:4])
     mes = int(fecha[5:7])
@@ -41,8 +40,9 @@ def fechaAtupla(fecha: str) -> tuple:
 def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -> dict:
     '''Dada una fila de la tabla (un diccionario), un atributo, una lista de valores y un índice, devuelve un diccionario.
     Si el atributo recibido es el tiempo, convierte el valor asociado en el diccionario (la string) a una tupla. 
-    Si el atributo es latitud, longitud, PM 10, PM 2.5, dióxido de nitrógeno o índice UV, convierte el valor asociado en el diccionario (la string) a float. 
-    Si el atributo es monóxido de carbono, ozono, polvo, European AQI o hazardous events, convierte el valor asociado en el diccionario (la string) a int.
+    Si el atributo es la ciudad, el valor asociado en el diccionario queda como str.
+    Si el atributo es European AQI o hazardous events, convierte el valor asociado en el diccionario (la string) a int.
+    Si el atributo es otro, convierte el valor asociado en el diccionario (la string) a float.
 '''
     valor = valores[indice]
 
