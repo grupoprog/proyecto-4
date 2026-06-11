@@ -14,20 +14,29 @@
 
 # Ciudades (City): Strings
 
-# Valores correspondientes a Latitude, Longitude, PM10_ug_m3, PM2_5_ug_m3, Nitrogen_Dioxide_ug_m3, UV_Index: Float
+# Valores correspondientes a Latitude, Longitude, PM10_ug_m3, PM2_5_ug_m3, Carbon_Monoxide_ug_m3, 
+# Nitrogen_Dioxide_ug_m3, Ozone_ug_m3, Dust_ug_m3, UV_Index: Float
 
-# valores correspondientes a Carbon_Monoxide_ug_m3, Ozone_ug_m3, Dust_ug_m3, European_AQI, Hazardous_Event: Int 
+# valores correspondientes a European_AQI, Hazardous_Event: Int 
 # -------------------------------------------------------------------------------------------------------------------
 import streamlit as st
 
-def fechaAtupla(fecha):
-    '''str -> tuple[int,int,int,int] '''
-	anio = int(fecha[0:4])
+def fechaAtupla(fecha: str) -> tuple:
+    '''
+    str -> tuple[int,int,int,int]
+    
+    Dada una fecha como string, devuelve la misma fecha 
+    pasada a tupla.
+
+    fechaAtupla("2025-10-02 6:00")
+    '''
+    anio = int(fecha[0:4])
     mes = int(fecha[5:7])
     dia = int(fecha[8:10])
     hora = int(fecha[11:13]) 
 
     return (anio,mes,dia,hora)
+
 
 def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -> dict:
     valor = valores[indice]
@@ -35,16 +44,14 @@ def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -
     if atributo == "Timestamp":
         linea[atributo] = fechaAtupla(valor)
 
-    elif atributo == "Latitude" or atributo == "Longitude" or atributo == "PM10_ug_m3" or atributo == "PM2_5_ug_m3" or 
-         atributo == "Nitrogen_Dioxide_ug_m3" or atributo == "UV_Index":
-        linea[atributo] = float(valor)
+    elif atributo == "City":
+        linea[atributo] = valor
 
-    elif atributo == "Carbon_Monoxide_ug_m3" or atributo == "Ozone_ug_m3" or atributo == "Dust_ug_m3" or atributo == "European_AQI" or 
-         atributo == "Hazardous_Event" or atributo == "UV_Index":
-         linea[atributo] = int(valor)
+    elif atributo == "Hazardous_Event" or atributo == "European_AQI":
+        linea[atributo] = int(valor)
     
     else: 
-        linea[atributo] = valor
+        linea[atributo] = float(valor)
     
     return linea
 
@@ -76,8 +83,8 @@ def procesar_archivo(nombre: str) -> list[dict]:
     datos = []
     for linea in archivo:          
         valores = linea.rstrip("\n").split(",")
-        crear_linea(identificador, valores)
-        datos.append(dic)
+        linea = crear_linea(identificadores, valores)
+        datos.append(linea)
 
     archivo.close()
     return datos
@@ -91,7 +98,7 @@ def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
     """
     lista_nueva = []
     for e in tabla:
-        if  e["Timestamp"][:4] == año:
+        if e["Timestamp"][:4] == año:
             lista_nueva.append(e)
     return lista_nueva
 
