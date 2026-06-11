@@ -137,9 +137,7 @@ def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
             #lista_nueva.append(e)
     return mayores_promedios(promedio(lista_nueva))
 
-def pregunta_1():
 
-    st.title("")
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
     tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
@@ -151,6 +149,8 @@ def main():
    # {"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
     #con la siguiente funcion ya se ve una tabla en la pagina
     #st.table(ejemplo)
+    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
+    st.table(filtrar_por_año(tabla, 2025))
 
 
 if __name__ == "__main__":
