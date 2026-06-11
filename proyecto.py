@@ -44,6 +44,28 @@ def procesar_archivo(nombre: str) -> list[dict]:
     archivo.close()
     return datos
 
+def promedio(dic):
+    for e in dic:
+        dic[e]=dic[e][1]/dic[e][0]
+    return dic
+def mayores_promedios(dic):
+    nuevo_dic={"ciudades":[],
+                "promedios":[]}
+    for e in dic:
+        flag = False
+        if len(nuevo_dic["ciudades"]) < 5:
+            nuevo_dic["ciudades"].append(e)
+            nuevo_dic["promedios"].append(dic[e])
+            print(nuevo_dic["promedios"])
+        else:
+            for el in nuevo_dic["promedios"]:
+                count = 0
+                if dic[e] > el and not flag:
+                    nuevo_dic["promedios"]=nuevo_dic["promedios"][0:count]+ [dic[e]] + nuevo_dic["promedios"][count:4]
+                    nuevo_dic["ciudades"]=nuevo_dic["ciudades"][0:count]+ [e] + nuevo_dic["ciudades"][count:4]
+                    flag = True
+                count += 1
+    return nuevo_dic
 
 def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
     """
@@ -51,22 +73,31 @@ def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
     
     Recibe una tabla y un año, y produce una tabla con todas las entradas coincidentes a ese año
     """
-    lista_nueva = []
+    lista_nueva = {}
+    
     for e in tabla:
         if  e["Timestamp"][:4] == año:
-            lista_nueva.append(e)
-    return lista_nueva
+            if e["City"] in lista_nueva:
+                lista_nueva[e["City"]][0] += 1
+                lista_nueva[e["City"]][1] += float(e["Dust_ug_m3"])
+            else:
+                lista_nueva[e["City"]]=[1,float(e["Dust_ug_m3"])]
 
+            #lista_nueva.append(e)
+    return mayores_promedios(promedio(lista_nueva))
 
+def pregunta_1():
+
+    st.title("")
 def main():
-    #python -m streamlit run app.py para ejecutar la aplicación
+    #python -m streamlit run proyecto.py para ejecutar la aplicación
     #tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
     tabla = procesar_archivo("tabla_para_tests.csv")
     print(filtrar_por_año(tabla, "2025"))
     # ejemplo para tabla:
     #ejemplo = [{"Nombre": "Pedrito", "Edad":14, "Le gusta jugar?":"si"},
     #{"Nombre": "Ramon", "Edad":66, "Le gusta jugar?":"no"},
-    #{"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
+   # {"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
     #con la siguiente funcion ya se ve una tabla en la pagina
     #st.table(ejemplo)
 
