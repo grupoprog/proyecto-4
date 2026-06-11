@@ -37,7 +37,7 @@ def fechaAtupla(fecha: str) -> tuple:
     return (anio,mes,dia,hora)
 
 
-def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -> dict:
+def agregar_valor(fila: dict, atributo: str, valores: list[str], indice: int) -> dict:
     '''Dada una fila de la tabla (un diccionario), un atributo, una lista de valores y un índice, devuelve un diccionario.
     Si el atributo recibido es el tiempo, convierte el valor asociado en el diccionario (la string) a una tupla. 
     Si el atributo es la ciudad, el valor asociado en el diccionario queda como str.
@@ -47,32 +47,32 @@ def agregar_valor(linea: dict, atributo: str, valores: list[str], indice: int) -
     valor = valores[indice]
 
     if atributo == "Timestamp":
-        linea[atributo] = fechaAtupla(valor)
+        fila[atributo] = fechaAtupla(valor)
 
     elif atributo == "City":
-        linea[atributo] = valor
+        fila[atributo] = valor
 
     elif atributo == "Hazardous_Event" or atributo == "European_AQI":
-        linea[atributo] = int(valor)
+        fila[atributo] = int(valor)
     
     else: 
-        linea[atributo] = float(valor)
+        fila[atributo] = float(valor)
     
-    return linea
+    return fila
 
 
-def crear_linea(identificadores: list[str], valores: list[str]) -> dict:
+def crear_fila(identificadores: list[str], valores: list[str]) -> dict:
     '''
     Dado una lista de atributos y una lista de valores, devuelve una 
-    linea de la tabla cuyos valores están en 
+    fila de la tabla cuyos valores están en 
     '''
-    linea = {}
+    fila = {}
     i = 0
     for atributo in identificadores:
-        linea = agregar_valor(linea,atributo,valores,i)
+        fila = agregar_valor(fila,atributo,valores,i)
         i += 1
     
-    return linea
+    return fila
 
 
 def procesar_archivo(nombre: str) -> list[dict]:
@@ -86,10 +86,10 @@ def procesar_archivo(nombre: str) -> list[dict]:
     archivo = open(nombre)
     identificadores = archivo.readline().rstrip("\n").split(",")     # obtengo los identificadores
     datos = []
-    for linea in archivo:          
-        valores = linea.rstrip("\n").split(",")
-        linea = crear_linea(identificadores, valores)
-        datos.append(linea)
+    for fila in archivo:          
+        valores = fila.rstrip("\n").split(",")
+        fila = crear_fila(identificadores, valores)
+        datos.append(fila)
 
     archivo.close()
     return datos
@@ -126,13 +126,15 @@ def filtrar_por_año(tabla: list[dict],año: int) -> list[dict]:
     """
     lista_nueva = {}
     
-    for e in tabla:
-        if  e["Timestamp"][0] == año:
-            if e["City"] in lista_nueva:
-                lista_nueva[e["City"]][0] += 1
-                lista_nueva[e["City"]][1] += e["Dust_ug_m3"]
+    for fila in tabla:
+        anio_fecha = fila["Timestamp"][0]
+        if anio_fecha == año:
+            ciudad = fila["City"]
+            if ciudad in lista_nueva:
+                lista_nueva[ciudad][0] += 1
+                lista_nueva[ciudad][1] += e["Dust_ug_m3"]
             else:
-                lista_nueva[e["City"]]=[1,e["Dust_ug_m3"]]
+                lista_nueva[ciudad]=[1,e["Dust_ug_m3"]]
 
             #lista_nueva.append(e)
     return mayores_promedios(promedio(lista_nueva))
