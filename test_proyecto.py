@@ -74,3 +74,8 @@ def test_pregunta_1():
      'Carbon_Monoxide_ug_m3': 289.0, 'Nitrogen_Dioxide_ug_m3': 38.7, 'Ozone_ug_m3': 14.0, 'Dust_ug_m3': 0.0, 'UV_Index': 0.0, 'European_AQI': 63, 'Hazardous_Event': 0}],
      2025) ==\
      {'ciudades': ['Delhi', 'Mumbai', 'Beijing', 'Tokyo', 'Mexico City'], 'promedios': [176.0, 41.0, 14.0, 1.0, 1.0]}
+
+def test_fecha_str():
+    assert fecha_str((2025, 1, 10, 9)) == "Enero 2025"
+    assert fecha_str((2025, 8, 2, 15)) == "Agosto 2025"
+    assert fecha_str((2026, 5, 27, 18)) == "Mayo 2026"
