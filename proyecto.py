@@ -187,21 +187,21 @@ def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
     '''
-    acceder_pregunta_1 = False
-    acceder_pregunta_2 = False
+    preg_1, preg_2 = st.tabs(["Pregunta 1", "Pregunta 2"], on_change = "rerun")
 
-    with st.sidebar:
-        if st.button("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?", type = "tertiary"):
-            acceder_pregunta_1 = True
-        if st.button("Hola"):
-            acceder_pregunta_2 = True
-
-    if acceder_pregunta_1:
+    if preg_1.open:
         st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
         st.table(pregunta_1(tabla, 2025))
     
-    if acceder_pregunta_2:
-        st.write("Hola!")
+    if preg_2.open:
+        st.title("¿Cuál es el promedio de índice UV que tiene una ciudad en un mes X?")
+        meses = ["Enero 2025", "Febrero 2025"]
+        opcion = st.selectbox("Elija un mes", meses,)
+        st.write("Mapa del promedio de UV en el mes de", opcion)
+        # prueba del mapa:
+        st.map([{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
+            {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}],
+            latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
 def main():
