@@ -222,7 +222,18 @@ def elegir_color(prom_UV: float) -> str:
     return color
 
 
-#def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
+def filtrar(fila: dict, atributos: list) -> dict:
+    '''
+    Dada una "fila", devuelve un diccionario con 
+    los atributos y valores 
+    '''
+    fila_filtrada = {}
+    for atributo in atributos:
+        fila_filtrada[atributo] = fila[atributo]
+    
+    return fila_filtrada
+
+def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
     '''
     Dada una "tabla", devuelve un diccionario de la forma {mes/año: ubicaciones} 
     donde la clave "mes/año" es un string con el nombre de mes y un año, y sus valores
@@ -230,15 +241,23 @@ def elegir_color(prom_UV: float) -> str:
     En donde, "Latitude" y "Longitude" son los valores correspondientes a los mismos de la tabla y el "Color" está 
     dado por el promedio de indices UV de cada ciudad en el "mes/año" correspondiente.
     '''
+    dic = {}
+    dic_aux = {}
+    tabla_aux = []
+    atributos = ["Timestamp", "Latitude", "Longitude"]
+    for fila in tabla:
+        fila_filtrada = filtrar(fila, atributos)
 
-#    dic = {}
-#    ubicacionesXmes = []
-#    for fila in tabla:
-#        fecha = fecha_str(fila["Timestamp"])
-#        if fecha not in dic:
-#            dic[fecha] = []
-#        else:
-#            dic[fecha].append()
+        ciudad = fila["city"]
+        ind_UV = fila["UV_Index"]
+        if ciudad not in dic_aux:
+            dic_aux[ciudad] = [1,ind_UV]
+        else:
+            dic_aux[ciudad][0] += 1
+            dic_aux[ciudad][1] += ind_UV
+
+        tabla_aux.append(fila_filtrada)
+    
 
 
 
