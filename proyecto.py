@@ -196,6 +196,31 @@ def fecha_str(fecha: tuple) -> str:
 
     return mes_str + " " + año_str
 
+def elegir_color(prom_UV: float) -> str:
+    '''
+    Dado el "promedio de UV", devuelve el "color" como str en su
+    forma Hexadesimal, según la siguiente forma:
+
+    Verde: 0 <= prom_UV < 3
+    Amarillo: 3 <= prom_UV < 6
+    Naranja: 6 <= prom_UV < 8
+    Rojo: 8 <= prom-UV < 11
+    Violeta: 11 <= prom_UV
+    '''
+    color = ""
+    if prom_UV < 3:
+        color = "#0DFF00C8"
+    elif prom_UV >= 3 and prom_UV < 6:
+        color = "#FFFF00C8"
+    elif prom_UV >= 6 and prom_UV < 8:
+        color = "#FF9900C7"
+    elif prom_UV >= 8 and prom_UV < 11:
+        color = "#FF0000C7"
+    else:
+        color = "#C300FFC6"
+    
+    return color
+
 
 #def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
     '''
@@ -235,9 +260,13 @@ def ejecutar_programa(tabla: list[dict]):
         opcion = st.selectbox("Elija un mes", meses,)
         st.write("Mapa del promedio de UV en el mes de", opcion)
         # prueba del mapa:
-        st.map([{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
-                {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}],
-               latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
+        dic_prueba = {
+            "Enero 2025": [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
+                           {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}],
+            "Febrero 2025": [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#0DFF00C8"},
+                             {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#FF0000C7"}]
+        }
+        st.map(dic_prueba[opcion], latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
 def main():
