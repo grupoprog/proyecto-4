@@ -187,8 +187,21 @@ def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
     '''
-    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
-    st.table(pregunta_1(tabla, 2025))
+    acceder_pregunta_1 = False
+    acceder_pregunta_2 = False
+
+    with st.sidebar:
+        if st.button("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?", type = "tertiary"):
+            acceder_pregunta_1 = True
+        if st.button("Hola"):
+            acceder_pregunta_2 = True
+
+    if acceder_pregunta_1:
+        st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
+        st.table(pregunta_1(tabla, 2025))
+    
+    if acceder_pregunta_2:
+        st.write("Hola!")
 
 
 def main():
