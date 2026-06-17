@@ -183,6 +183,42 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     return mayores_promedios(ciudades_promedios)
 
 
+def fecha_str(fecha: tuple) -> str:
+    '''
+    Dada una "fecha" de la tabla, devuelve el string con 
+    el nombre del mes y año.
+    '''
+    meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    ind_mes = fecha[1] - 1
+    mes_str = meses[ind_mes]
+    año_str = str(fecha[0])
+
+    return mes_str + " " + año_str
+
+
+#def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
+    '''
+    Dada una "tabla", devuelve un diccionario de la forma {mes/año: ubicaciones} 
+    donde la clave "mes/año" es un string con el nombre de mes y un año, y sus valores
+    "ubicaciones" es una lista de diccionarios de la forma [{"latitude": float, "Longitude": float, "Color": str}].
+    En donde, "Latitude" y "Longitude" son los valores correspondientes a los mismos de la tabla y el "Color" está 
+    dado por el promedio de indices UV de cada ciudad en el "mes/año" correspondiente.
+    '''
+
+#    dic = {}
+#    ubicacionesXmes = []
+#    for fila in tabla:
+#        fecha = fecha_str(fila["Timestamp"])
+#        if fecha not in dic:
+#            dic[fecha] = []
+#        else:
+#            dic[fecha].append()
+
+
+
+
+
 def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
@@ -200,8 +236,8 @@ def ejecutar_programa(tabla: list[dict]):
         st.write("Mapa del promedio de UV en el mes de", opcion)
         # prueba del mapa:
         st.map([{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
-            {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}],
-            latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
+                {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}],
+               latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
 def main():
