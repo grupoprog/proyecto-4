@@ -116,8 +116,29 @@ def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
         sum_ind_polvo = ciudades_filtradas[ciudad][1]
 
         ciudades_filtradas[ciudad] = sum_ind_polvo / cant_encuentros
-
+    print("Promedios: " + str(ciudades_filtradas))
     return ciudades_filtradas
+
+def ordenar_primeros_5(dic:dict[str:list]) -> dict[str:list]:
+    """
+    Funcion auxiliar para ordenar las primeros 5 ciudades de la funcion mayores_promedios
+    Recibe un dic["ciudades":List[String], "promedios":List[Number]
+    y produce el mismo tipo pero ordena simultaneamente ambas listas del diccionario
+    """
+    dic_aux={"ciudades":[dic["ciudades"][0]], "promedios":[dic["promedios"][0]]}
+    dic["ciudades"].pop(0)
+    dic["promedios"].pop(0) 
+    for i in range(4):
+        for j in range(len(dic_aux["ciudades"])):
+            if dic["promedios"][i] > dic_aux["promedios"][j]:
+                dic_aux["promedios"].insert(j,dic["promedios"][i])
+                dic_aux["ciudades"].insert(j,dic["ciudades"][i])
+                break
+        if dic["ciudades"][i] not in dic_aux["ciudades"]:
+            dic_aux["promedios"].append(dic["promedios"][i])
+            dic_aux["ciudades"].append(dic["ciudades"][i])
+    return dic_aux
+
 
 
 def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
@@ -126,28 +147,32 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     diccionarios de la forma {ciudad: promedio_polvo}. donde promedio_polvo es un float > 0
     Y los mayores promedios 
 
-    Recibe los promedio de polvo y produce los 5 mayores promedios de polvo ordenados de mayor a menor
+    Recibe los promedio de polvo y produce los 5 mayores promedios de polvo ordenados de mayor a menor con la
+    lista de las ciudades tambien ordenada acorde a sus promedios
     '''
     nuevo_dic = {"ciudades":[], "promedios":[]}
-    
+    cuenta = 0
+    flag_ordenado = False
     for ciudad in ciudades_promedios:
         flag = False
         cant_ciudades = len(nuevo_dic["ciudades"])
 
-        if cant_ciudades < 5:
+        if cuenta < 5 :
             nuevo_dic["ciudades"].append(ciudad)
             nuevo_dic["promedios"].append(ciudades_promedios[ciudad])
+            cuenta += 1
             
         else:
+            if not flag_ordenado: #en el primer else se deben ordenar los primeros 5
+                nuevo_dic = ordenar_primeros_5(nuevo_dic)
+                flag_ordenado=True
             count = 0
             for promedio in nuevo_dic["promedios"]:
-                
                 if ciudades_promedios[ciudad] > promedio and not flag:
                     nuevo_dic["promedios"] = nuevo_dic["promedios"][0:count] + [ciudades_promedios[ciudad]] + nuevo_dic["promedios"][count:4]
                     nuevo_dic["ciudades"] = nuevo_dic["ciudades"][0:count] + [ciudad] + nuevo_dic["ciudades"][count:4]
                     flag = True
                 count += 1
-
     return nuevo_dic
 
 
@@ -178,9 +203,9 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
             else:
                 ciudades_filtradas[ciudad] = [1,ind_polvo]
 
-    ciudades_promedios = promedio(ciudades_filtradas)
+    ciudades_promedios = mayores_promedios(promedio(ciudades_filtradas))
             
-    return mayores_promedios(ciudades_promedios)
+    return ciudades_promedios
 
 
 def ejecutar_programa(tabla: list[dict]):
