@@ -232,13 +232,13 @@ def elegir_color(prom_UV: float) -> str:
     Violeta: 11 <= prom_UV
     '''
     color = ""
-    if prom_UV < 3:
+    if prom_UV < 1:
         color = "#0DFF00C8"
-    elif prom_UV >= 3 and prom_UV < 6:
+    elif prom_UV >= 1 and prom_UV < 2:
         color = "#FFFF00C8"
-    elif prom_UV >= 6 and prom_UV < 8:
+    elif prom_UV >= 2 and prom_UV < 3:
         color = "#FF9900C7"
-    elif prom_UV >= 8 and prom_UV < 11:
+    elif prom_UV >= 3 and prom_UV < 4:
         color = "#FF0000C7"
     else:
         color = "#C300FFC6"
@@ -303,7 +303,7 @@ def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     dado por el promedio de indices UV de cada ciudad en el "mes/año" correspondiente.
     '''
     ciudades_promedios = filtrar_ciudades(tabla, fecha)
-
+    
     lista = []
     for ciudad in ciudades_promedios:
         latitud = ciudades_promedios[ciudad][0]
@@ -327,15 +327,17 @@ def ejecutar_programa(tabla: list[dict]):
     
     if preg_2.open:
         st.title("¿Cuál es el promedio de índice UV que tiene una ciudad en un mes X?")
-        meses = ["Enero 2025", "Febrero 2025"]
-        opcion = st.selectbox("Elija un mes", meses,)
+        meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
+                 "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
+                 "Abril 2026", "Mayo 2026"]
+        opcion = st.selectbox("Elija un mes", meses)
         st.write("Mapa del promedio de UV en el mes de", opcion)
         # prueba del mapa:
-        dic_prueba = [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
-                           {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}]
+        #dic_prueba = [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
+        #                   {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}]
             
         ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
-        
+        #st.write(ubicaciones_promedios)
         st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
