@@ -82,7 +82,7 @@ def test_fecha_str():
 
 def test_elegir_color():
     assert elegir_color(15.0) == "#C300FFC6"
-    assert elegir_color(5.65) == "#FFFF00C8"
+    assert elegir_color(1.65) == "#FFFF00C8"
     assert elegir_color(0.0) == "#0DFF00C8"
 
 def test_filtrar_ciudades():

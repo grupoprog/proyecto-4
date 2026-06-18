@@ -1,4 +1,12 @@
 # -------------------------------------------------------------------------------------------------------------------
+# Trabajo Practico Grupal: Calidad del aire en distintas ciudades del mundo y niveles de polución.
+# Catedra Programación II, 2C.
+# Grupo 4
+# Integrantes: Borraccini, Renzo.
+#              Ruelli qubertie, Jazmín.
+#              Estibiarria, Tomás.
+# Fecha: 18/6/2026
+# -------------------------------------------------------------------------------------------------------------------
 # Diseño de datos:
 
 # Representamos una "tabla" (dataset) como una lista de diccionarios, donde cada
@@ -207,6 +215,8 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
 
 def fecha_str(fecha: tuple) -> str:
     '''
+    Fecha(tupla) -> Fecha("Mes año")
+
     Dada una "fecha" de la tabla, devuelve el string con 
     el nombre del mes y año.
     '''
@@ -220,14 +230,16 @@ def fecha_str(fecha: tuple) -> str:
 
 def elegir_color(prom_UV: float) -> str:
     '''
+    prom_UV -> Color
+
     Dado el "promedio de UV", devuelve el "color" como str en su
     forma Hexadesimal, según la siguiente forma:
 
-    Verde: 0 <= prom_UV < 3
-    Amarillo: 3 <= prom_UV < 6
-    Naranja: 6 <= prom_UV < 8
-    Rojo: 8 <= prom-UV < 11
-    Violeta: 11 <= prom_UV
+    Verde: 0 <= prom_UV < 1
+    Amarillo: 1 <= prom_UV < 2
+    Naranja: 2 <= prom_UV < 3
+    Rojo: 3 <= prom-UV < 4
+    Violeta: 4 <= prom_UV
     '''
     color = ""
     if prom_UV < 1:
@@ -244,9 +256,12 @@ def elegir_color(prom_UV: float) -> str:
     return color
 
 def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
-    '''dada una tabla, filtra ciudades segun el año y mes pasados y devuelve un diccionario de la forma:
-    {ciudad:(latitud,longitud,promedio_indice_uv)}
-    es decir cada ciudad queda asociada a sus coordenadas y al promedio de indice uv durante el mes del año indicado
+    '''
+    Tabla Fecha("Mes año") -> dict[str:tuple]
+
+    dada una tabla y una fecha dada como string de la forma "mes año, filtra ciudades segun el año y mes pasados 
+    y devuelve un diccionario de la forma: {ciudad:(latitud,longitud,promedio_indice_uv)}.
+    Es decir cada ciudad queda asociada a sus coordenadas y al promedio de indice uv durante el mes del año indicado
     '''
     ciudades_filtradas = {}
     ubicaciones = {}
@@ -284,6 +299,8 @@ def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
 
 def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     '''
+    Tabla fecha("Mes año") -> list[dict]
+
     Dada una "tabla" y una fecha en la forma "mes año", devuelve ubicaciones,
     una lista de diccionarios de la forma [{"Latitude": float, "Longitude": float, "Color": str}].
     En donde, "Latitude" y "Longitude" son los valores correspondientes a los mismos de la tabla y el "Color" está 
@@ -319,12 +336,9 @@ def ejecutar_programa(tabla: list[dict]):
                  "Abril 2026", "Mayo 2026"]
         opcion = st.selectbox("Elija un mes", meses)
         st.write("Mapa del promedio de UV en el mes de", opcion)
-        # prueba del mapa:
-        #dic_prueba = [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
-        #                   {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}]
-            
+        
         ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
-        #st.write(ubicaciones_promedios)
+        
         st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
