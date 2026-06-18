@@ -269,7 +269,7 @@ def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
     dic = {}
     dic_aux = {}
     tabla_aux = []
-    atributos = ["Timestamp", "Latitude", "Longitude"]
+    atributos = ["Timestamp", "City", "Latitude", "Longitude"]
     for fila in tabla:
         fila_filtrada = filtrar(fila, atributos)
 
@@ -280,8 +280,10 @@ def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
         else:
             dic_aux[ciudad][0] += 1
             dic_aux[ciudad][1] += ind_UV
-
+            
         tabla_aux.append(fila_filtrada)
+    
+
     
 
 
