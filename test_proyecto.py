@@ -79,3 +79,8 @@ def test_fecha_str():
     assert fecha_str((2025, 1, 10, 9)) == "Enero 2025"
     assert fecha_str((2025, 8, 2, 15)) == "Agosto 2025"
     assert fecha_str((2026, 5, 27, 18)) == "Mayo 2026"
+
+def test_elegir_color():
+    assert elegir_color(15) == "#C300FFC6"
+    assert elegir_color(5.65) == "#FFFF00C8"
+    assert elegir_color(0) == "#0DFF00C8"
