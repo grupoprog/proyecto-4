@@ -115,7 +115,7 @@ def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
         sum_ind = ciudades_filtradas[ciudad][1]
 
         ciudades_filtradas[ciudad] = sum_ind / cant_encuentros
-    print("Promedios: " + str(ciudades_filtradas))
+    
     return ciudades_filtradas
 
 def ordenar_primeros_5(dic:dict[str:list]) -> dict[str:list]:
@@ -245,30 +245,43 @@ def elegir_color(prom_UV: float) -> str:
     
     return color
 
-def filtrar_ciudades(tabla: list[dict],anio: int,mes:int)-> dict[str: float]:
+def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
     '''dada una tabla, filtra ciudades segun el año y mes pasados y devuelve un diccionario de la forma:
     {ciudad:promedio_indice_uv}
     es decir cada ciudad queda asociada al promedio de indice uv durante el mes del año indicado
     '''
     ciudades_filtradas = {}
+    ubicaciones = {}
     
     for fila in tabla:
-        anio_fecha = fila["Timestamp"][0]
-        mes_fecha = fila["Timestamp"][1]
+        fecha_fila = fecha_str(fila["Timestamp"])
         ciudad = fila["City"]
         ind_uv = fila['UV_Index']
+        latitud = fila["Latitude"]
+        longitud = fila["Longitude"]
 
-        if anio_fecha == anio and mes_fecha==mes:
+        if fecha == fecha_fila:
 
             if ciudad in ciudades_filtradas:
                 ciudades_filtradas[ciudad][0] += 1
                 ciudades_filtradas[ciudad][1] += ind_uv
             else:
                 ciudades_filtradas[ciudad] = [1,ind_uv]
+        
+        if ciudad not in ubicaciones:
+            ubicaciones[ciudad] = (latitud,longitud)
 
-    ciudades_promedios = (promedio(ciudades_filtradas))
+    ciudades_promedios = promedio(ciudades_filtradas)
+
+    promedios_ubicaciones = {}
+
+    for ciudad in ciudades_promedios:
+        latitud = ubicaciones[ciudad][0]
+        longitud = ubicaciones[ciudad][1]
+        promed = ciudades_promedios[ciudad]
+        promedios_ubicaciones[ciudad] = (latitud, longitud, promed)
             
-    return ciudades_promedios
+    return promedios_ubicaciones
 
 def filtrar(fila: dict, atributos: list) -> dict:
     '''
@@ -281,7 +294,7 @@ def filtrar(fila: dict, atributos: list) -> dict:
     
     return fila_filtrada
 
-def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
+def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     '''
     Dada una "tabla", devuelve un diccionario de la forma {mes/año: ubicaciones} 
     donde la clave "mes/año" es un string con el nombre de mes y un año, y sus valores
@@ -289,28 +302,17 @@ def filtrar_ubicacionesXmes(tabla: list[dict]) -> dict[str: list[dict]]:
     En donde, "Latitude" y "Longitude" son los valores correspondientes a los mismos de la tabla y el "Color" está 
     dado por el promedio de indices UV de cada ciudad en el "mes/año" correspondiente.
     '''
-    dic = {}
-    dic_aux = {}
-    tabla_aux = []
-    atributos = ["Timestamp", "City", "Latitude", "Longitude"]
-    for fila in tabla:
-        fila_filtrada = filtrar(fila, atributos)
+    ciudades_promedios = filtrar_ciudades(tabla, fecha)
 
-        ciudad = fila["city"]
-        ind_UV = fila["UV_Index"]
-        if ciudad not in dic_aux:
-            dic_aux[ciudad] = [1,ind_UV]
-        else:
-            dic_aux[ciudad][0] += 1
-            dic_aux[ciudad][1] += ind_UV
-            
-        tabla_aux.append(fila_filtrada)
+    lista = []
+    for ciudad in ciudades_promedios:
+        latitud = ciudades_promedios[ciudad][0]
+        longitud = ciudades_promedios[ciudad][1]
+        promedio = ciudades_promedios[ciudad][2]
+
+        lista.append({"Latitude": latitud, "Longitude": longitud, "Color": elegir_color(promedio)})
     
-
-    
-
-
-
+    return lista
 
 
 def ejecutar_programa(tabla: list[dict]):
@@ -329,13 +331,12 @@ def ejecutar_programa(tabla: list[dict]):
         opcion = st.selectbox("Elija un mes", meses,)
         st.write("Mapa del promedio de UV en el mes de", opcion)
         # prueba del mapa:
-        dic_prueba = {
-            "Enero 2025": [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
-                           {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}],
-            "Febrero 2025": [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#0DFF00C8"},
-                             {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#FF0000C7"}]
-        }
-        st.map(dic_prueba[opcion], latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
+        dic_prueba = [{"Latitude": -34.6037, "Longitude": -58.3816, "Color":"#FFFF00C8"},
+                           {"Latitude": 19.4326, "Longitude": -99.1332, "Color": "#0DFF00C8"}]
+            
+        ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
+        
+        st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
 def main():
