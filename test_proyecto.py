@@ -80,6 +80,52 @@ def test_fecha_str():
     assert fecha_str((2025, 8, 2, 15)) == "Agosto 2025"
     assert fecha_str((2026, 5, 27, 18)) == "Mayo 2026"
 
+def test_filtrar_ciudades():
+    assert filtrar_ciudades([{'Timestamp': (2026, 2, 15, 13), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 
+    'PM10_ug_m3': 25.3, 'PM2_5_ug_m3': 25.0, 'Carbon_Monoxide_ug_m3': 271.0, 'Nitrogen_Dioxide_ug_m3': 4.5,
+    'Ozone_ug_m3': 184.0, 'Dust_ug_m3': 0.0, 'UV_Index': 9.25, 'European_AQI': 70, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 2, 30, 23), 'City': 'Tokyo', 'Latitude': 35.6895, 'Longitude': 139.6917, 'PM10_ug_m3': 23.5, 
+    'PM2_5_ug_m3': 20.1, 'Carbon_Monoxide_ug_m3': 321.0, 'Nitrogen_Dioxide_ug_m3': 53.1, 'Ozone_ug_m3': 41.0, 'Dust_ug_m3': 1.0,
+    'UV_Index': 0.0, 'European_AQI': 25, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 1, 10, 9), 'City': 'Sao Paulo', 'Latitude': -23.5505, 'Longitude': -46.6333, 'PM10_ug_m3': 7.5, 
+     'PM2_5_ug_m3': 7.5, 'Carbon_Monoxide_ug_m3': 306.0, 'Nitrogen_Dioxide_ug_m3': 9.0, 'Ozone_ug_m3': 154.0, 'Dust_ug_m3': 0.0, 
+     'UV_Index': 6.4, 'European_AQI': 64, 'Hazardous_Event': 0}],2026,2) == \
+     {'Mexico City':9.25, 'Tokyo':0.0}
+    assert filtrar_ciudades([{'Timestamp': (2026, 2, 15, 13), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 
+    'PM10_ug_m3': 25.3, 'PM2_5_ug_m3': 25.0, 'Carbon_Monoxide_ug_m3': 271.0, 'Nitrogen_Dioxide_ug_m3': 4.5,
+    'Ozone_ug_m3': 184.0, 'Dust_ug_m3': 0.0, 'UV_Index': 9.25, 'European_AQI': 70, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 2, 30, 23), 'City': 'Tokyo', 'Latitude': 35.6895, 'Longitude': 139.6917, 'PM10_ug_m3': 23.5, 
+    'PM2_5_ug_m3': 20.1, 'Carbon_Monoxide_ug_m3': 321.0, 'Nitrogen_Dioxide_ug_m3': 53.1, 'Ozone_ug_m3': 41.0, 'Dust_ug_m3': 1.0,
+    'UV_Index': 0.0, 'European_AQI': 25, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 2, 10, 9), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 'PM10_ug_m3': 7.5, 
+     'PM2_5_ug_m3': 7.5, 'Carbon_Monoxide_ug_m3': 306.0, 'Nitrogen_Dioxide_ug_m3': 9.0, 'Ozone_ug_m3': 154.0, 'Dust_ug_m3': 0.0, 
+     'UV_Index': 6.4, 'European_AQI': 64, 'Hazardous_Event': 0}],2026,2) ==\
+    {'Mexico City':7.825, 'Tokyo':0.0}
+
+
+def test_filtrar_ciudades():
+    assert filtrar_ciudades([{'Timestamp': (2026, 2, 15, 13), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 
+    'PM10_ug_m3': 25.3, 'PM2_5_ug_m3': 25.0, 'Carbon_Monoxide_ug_m3': 271.0, 'Nitrogen_Dioxide_ug_m3': 4.5,
+    'Ozone_ug_m3': 184.0, 'Dust_ug_m3': 0.0, 'UV_Index': 9.25, 'European_AQI': 70, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 2, 30, 23), 'City': 'Tokyo', 'Latitude': 35.6895, 'Longitude': 139.6917, 'PM10_ug_m3': 23.5, 
+    'PM2_5_ug_m3': 20.1, 'Carbon_Monoxide_ug_m3': 321.0, 'Nitrogen_Dioxide_ug_m3': 53.1, 'Ozone_ug_m3': 41.0, 'Dust_ug_m3': 1.0,
+    'UV_Index': 0.0, 'European_AQI': 25, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 1, 10, 9), 'City': 'Sao Paulo', 'Latitude': -23.5505, 'Longitude': -46.6333, 'PM10_ug_m3': 7.5, 
+     'PM2_5_ug_m3': 7.5, 'Carbon_Monoxide_ug_m3': 306.0, 'Nitrogen_Dioxide_ug_m3': 9.0, 'Ozone_ug_m3': 154.0, 'Dust_ug_m3': 0.0, 
+     'UV_Index': 6.4, 'European_AQI': 64, 'Hazardous_Event': 0}],2026,2) == \
+     {'Mexico City':9.25, 'Tokyo':0.0}
+    assert filtrar_ciudades([{'Timestamp': (2026, 2, 15, 13), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 
+    'PM10_ug_m3': 25.3, 'PM2_5_ug_m3': 25.0, 'Carbon_Monoxide_ug_m3': 271.0, 'Nitrogen_Dioxide_ug_m3': 4.5,
+    'Ozone_ug_m3': 184.0, 'Dust_ug_m3': 0.0, 'UV_Index': 9.25, 'European_AQI': 70, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 2, 30, 23), 'City': 'Tokyo', 'Latitude': 35.6895, 'Longitude': 139.6917, 'PM10_ug_m3': 23.5, 
+    'PM2_5_ug_m3': 20.1, 'Carbon_Monoxide_ug_m3': 321.0, 'Nitrogen_Dioxide_ug_m3': 53.1, 'Ozone_ug_m3': 41.0, 'Dust_ug_m3': 1.0,
+    'UV_Index': 0.0, 'European_AQI': 25, 'Hazardous_Event': 0},
+    {'Timestamp': (2026, 2, 10, 9), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 'PM10_ug_m3': 7.5, 
+     'PM2_5_ug_m3': 7.5, 'Carbon_Monoxide_ug_m3': 306.0, 'Nitrogen_Dioxide_ug_m3': 9.0, 'Ozone_ug_m3': 154.0, 'Dust_ug_m3': 0.0, 
+     'UV_Index': 6.4, 'European_AQI': 64, 'Hazardous_Event': 0}],2026,2) ==\
+    {'Mexico City':7.825, 'Tokyo':0.0}
+
+
 def test_elegir_color():
     assert elegir_color(15) == "#C300FFC6"
     assert elegir_color(5.65) == "#FFFF00C8"
