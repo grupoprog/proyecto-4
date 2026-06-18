@@ -342,14 +342,6 @@ def ejecutar_programa(tabla: list[dict]):
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
     tabla = procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
-    #tabla = procesar_archivo("tabla_para_tests.csv")
-    #print(pregunta_1(tabla, 2025))
-    #ejemplo para tabla:
-    #ejemplo = [{"Nombre": "Pedrito", "Edad":14, "Le gusta jugar?":"si"},
-    #{"Nombre": "Ramon", "Edad":66, "Le gusta jugar?":"no"},
-    #{"Nombre": "Oscar", "Edad":56, "Le gusta jugar?":"no"}]
-    #con la siguiente funcion ya se ve una tabla en la pagina
-    #st.table(ejemplo)
     ejecutar_programa(tabla)
 
 
