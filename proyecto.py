@@ -240,6 +240,9 @@ def elegir_color(prom_UV: float) -> str:
     Naranja: 2 <= prom_UV < 3
     Rojo: 3 <= prom-UV < 4
     Violeta: 4 <= prom_UV
+
+    (La escala de los colores no es la que se suele usar en general, se 
+    modificó para que sea más visual el cambio de colores).
     '''
     color = ""
     if prom_UV < 1:
