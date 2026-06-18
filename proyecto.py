@@ -139,7 +139,6 @@ def ordenar_primeros_5(dic:dict[str:list]) -> dict[str:list]:
     return dic_aux
 
 
-
 def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     '''
     Representamos los promedios de polvo de las ciudades (ciudades_promedios) como
@@ -206,7 +205,6 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
             
     return ciudades_promedios
 
-
 def fecha_str(fecha: tuple) -> str:
     '''
     Dada una "fecha" de la tabla, devuelve el string con 
@@ -247,8 +245,8 @@ def elegir_color(prom_UV: float) -> str:
 
 def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
     '''dada una tabla, filtra ciudades segun el año y mes pasados y devuelve un diccionario de la forma:
-    {ciudad:promedio_indice_uv}
-    es decir cada ciudad queda asociada al promedio de indice uv durante el mes del año indicado
+    {ciudad:(latitud,longitud,promedio_indice_uv)}
+    es decir cada ciudad queda asociada a sus coordenadas y al promedio de indice uv durante el mes del año indicado
     '''
     ciudades_filtradas = {}
     ubicaciones = {}
@@ -283,24 +281,13 @@ def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
             
     return promedios_ubicaciones
 
-def filtrar(fila: dict, atributos: list) -> dict:
-    '''
-    Dada una "fila", devuelve un diccionario con 
-    los atributos y valores 
-    '''
-    fila_filtrada = {}
-    for atributo in atributos:
-        fila_filtrada[atributo] = fila[atributo]
-    
-    return fila_filtrada
 
 def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     '''
-    Dada una "tabla", devuelve un diccionario de la forma {mes/año: ubicaciones} 
-    donde la clave "mes/año" es un string con el nombre de mes y un año, y sus valores
-    "ubicaciones" es una lista de diccionarios de la forma [{"latitude": float, "Longitude": float, "Color": str}].
+    Dada una "tabla" y una fecha en la forma "mes año", devuelve ubicaciones,
+    una lista de diccionarios de la forma [{"Latitude": float, "Longitude": float, "Color": str}].
     En donde, "Latitude" y "Longitude" son los valores correspondientes a los mismos de la tabla y el "Color" está 
-    dado por el promedio de indices UV de cada ciudad en el "mes/año" correspondiente.
+    dado por el promedio de indices UV de cada ciudad en el mes y año correspondiente.
     '''
     ciudades_promedios = filtrar_ciudades(tabla, fecha)
     
