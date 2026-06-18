@@ -99,23 +99,22 @@ def procesar_archivo(nombre_archivo: str) -> list[dict]:
 def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
     '''
     Representamos a las "Ciudades filtradas" como diccionarios 
-    de la forma {ciudad: [cantidad de veces encontrada, suma de indices de polvo]}. 
+    de la forma {ciudad: [cantidad de veces encontrada, suma de indices de polvo/indice uv]}. 
     donde la cantidad de veces que se encontro en la tabla es un int > 0 y la suma
-    de los indices de polvo es un float >= 0.
+    de los indices es un float >= 0.
 
-    representamos los promedios de polvo de las ciudades (ciudades_promedios) como diccionarios de la forma
-    {ciudad: promedio_polvo}. donde promedio_polvo es un float >= 0
+    representamos los promedios de el valor a calcular de las ciudades (ciudades_promedios) como diccionarios de la forma
+    {ciudad: promedio_indice}. donde promedio_indice es un float >= 0
 
     ciudades_filtradas -> ciudades_promedios
 
-    Dado un diccionario con las ciudades filtradas, devuelve un diccionario
-    con las ciudades y sus promedios de polvo.
+    Dado un diccionario con las ciudades filtradas, devuelve un diccionario con las ciudades y sus promedios de polvo/indice uv.
     '''
     for ciudad in ciudades_filtradas:
         cant_encuentros = ciudades_filtradas[ciudad][0]
-        sum_ind_polvo = ciudades_filtradas[ciudad][1]
+        sum_ind = ciudades_filtradas[ciudad][1]
 
-        ciudades_filtradas[ciudad] = sum_ind_polvo / cant_encuentros
+        ciudades_filtradas[ciudad] = sum_ind / cant_encuentros
     print("Promedios: " + str(ciudades_filtradas))
     return ciudades_filtradas
 
@@ -246,6 +245,30 @@ def elegir_color(prom_UV: float) -> str:
     
     return color
 
+def filtrar_ciudades(tabla: list[dict],anio: int,mes:int)-> dict[str: float]:
+    '''dada una tabla, filtra ciudades segun el año y mes pasados y devuelve un diccionario de la forma:
+    {ciudad:promedio_indice_uv}
+    es decir cada ciudad queda asociada al promedio de indice uv durante el mes del año indicado
+    '''
+    ciudades_filtradas = {}
+    
+    for fila in tabla:
+        anio_fecha = fila["Timestamp"][0]
+        mes_fecha = fila["Timestamp"][1]
+        ciudad = fila["City"]
+        ind_uv = fila['UV_Index']
+
+        if anio_fecha == anio and mes_fecha==mes:
+
+            if ciudad in ciudades_filtradas:
+                ciudades_filtradas[ciudad][0] += 1
+                ciudades_filtradas[ciudad][1] += ind_uv
+            else:
+                ciudades_filtradas[ciudad] = [1,ind_uv]
+
+    ciudades_promedios = (promedio(ciudades_filtradas))
+            
+    return ciudades_promedios
 
 def filtrar(fila: dict, atributos: list) -> dict:
     '''
