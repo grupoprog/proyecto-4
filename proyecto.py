@@ -3,7 +3,7 @@
 # Catedra Programación II, 2C.
 # Grupo 4
 # Integrantes: Borraccini, Renzo.
-#              Ruelli qubertie, Jazmín.
+#              Ruelli Cubertié, Jazmín.
 #              Estibiarria, Tomás.
 # Fecha: 18/6/2026
 # -------------------------------------------------------------------------------------------------------------------
