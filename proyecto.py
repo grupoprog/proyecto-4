@@ -181,7 +181,24 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
                 count += 1
     return nuevo_dic
 
+def filtrar_por_año_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
+    """
+    Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
+    """
+    ciudades_filtradas = {}
+    for fila in tabla:
+        anio_fecha = fila["Timestamp"][0]
+        ciudad = fila["City"]
+        atributo_individual = fila[atributo]
 
+        if anio_fecha == anio:
+
+            if ciudad in ciudades_filtradas:
+                ciudades_filtradas[ciudad][0] += 1
+                ciudades_filtradas[ciudad][1] += atributo_individual
+            else:
+                ciudades_filtradas[ciudad] = [1,atributo_individual]
+    return ciudades_filtradas
 def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
     representaremos los "mayores promedios" de las ciudades como
@@ -194,22 +211,7 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades con mayor promedio
     de indice de polvo.
     '''
-    ciudades_filtradas = {}
-    
-    for fila in tabla:
-        anio_fecha = fila["Timestamp"][0]
-        ciudad = fila["City"]
-        ind_polvo = fila["Dust_ug_m3"]
-
-        if anio_fecha == anio:
-
-            if ciudad in ciudades_filtradas:
-                ciudades_filtradas[ciudad][0] += 1
-                ciudades_filtradas[ciudad][1] += ind_polvo
-            else:
-                ciudades_filtradas[ciudad] = [1,ind_polvo]
-
-    ciudades_promedios = mayores_promedios(promedio(ciudades_filtradas))
+    ciudades_promedios = mayores_promedios(promedio(filtrar_por_año_y_suma(tabla,anio,"Dust_ug_m3")))
             
     return ciudades_promedios
 
@@ -322,6 +324,40 @@ def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     return lista
 
 
+def ciudad_america(ciudad:str)->bool:
+    '''dada una ciudad devuelve True si es de America
+    ciudad_america('Mexico City') == True
+    ciudad_america('Tokyo') == False
+    '''
+    lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
+    return ciudad in lista_ciudades_america
+
+
+
+def ejecutar_pregunta1(tabla):
+    '''
+    Produce los componentes de la pregunta 1 en la pagina
+    '''
+
+    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
+    st.table(pregunta_1(tabla, 2025))
+
+
+def ejecutar_pregunta2(tabla):
+    '''
+    Permite la entrada de la fecha y produce los componentes de la pregunta 2 en la pagina
+    '''
+    st.title("¿Cuál es el promedio de índice UV que tiene una ciudad en un mes X?")
+    meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
+             "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
+             "Abril 2026", "Mayo 2026"]
+    opcion = st.selectbox("Elija un mes", meses)
+    st.write("Mapa del promedio de UV en el mes de", opcion)
+        
+    ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
+        
+    st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
+
 def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
@@ -329,20 +365,10 @@ def ejecutar_programa(tabla: list[dict]):
     preg_1, preg_2 = st.tabs(["Pregunta 1", "Pregunta 2"], on_change = "rerun")
 
     if preg_1.open:
-        st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
-        st.table(pregunta_1(tabla, 2025))
+        ejecutar_pregunta1(tabla)
     
     if preg_2.open:
-        st.title("¿Cuál es el promedio de índice UV que tiene una ciudad en un mes X?")
-        meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
-                 "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
-                 "Abril 2026", "Mayo 2026"]
-        opcion = st.selectbox("Elija un mes", meses)
-        st.write("Mapa del promedio de UV en el mes de", opcion)
-        
-        ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
-        
-        st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
+        ejecutar_pregunta2(tabla)
 
 
 def main():
