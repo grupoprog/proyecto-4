@@ -441,9 +441,10 @@ def ejecutar_pregunta3(tabla: list[dict]):
     dic= pregunta_3(tabla,2025)
     x=dic["ciudades"]
     y=dic["promedios"]
+    bar_colors = ['tab:blue', 'tab:red', 'tab:orange']
 
     fig, ax = plt.subplots()
-    ax.bar(x, y)
+    ax.bar(x, y, color=bar_colors)
 
     ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
     ax.set_xlabel("ciudades")
