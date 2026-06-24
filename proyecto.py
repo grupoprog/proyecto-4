@@ -438,11 +438,15 @@ def ejecutar_pregunta3(tabla: list[dict]):
     dic= pregunta_3(tabla,2025)
     x=dic["ciudades"]
     y=dic["promedios"]
-    plt.bar(x,y)
-    plt.title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
-    plt.xlabel("ciudades")
-    plt.ylabel("promedios")
-    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.bar(x, y)
+
+    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
+    ax.set_xlabel("ciudades")
+    ax.set_ylabel("promedios")
+
+    st.pyplot(fig)
 
 
 def ejecutar_programa(tabla: list[dict]):
