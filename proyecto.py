@@ -28,6 +28,7 @@
 # valores correspondientes a European_AQI, Hazardous_Event: Int 
 # -------------------------------------------------------------------------------------------------------------------
 import streamlit as st
+import matplotlib.pyplot as plt
 
 def fechaAtupla(fecha: str) -> tuple:
     '''
@@ -193,12 +194,12 @@ def filtrar_por_año_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,floa
         atributo_individual = fila[atributo]
 
         if anio_fecha == anio:
-
             if ciudad in ciudades_filtradas:
                 ciudades_filtradas[ciudad][0] += 1
                 ciudades_filtradas[ciudad][1] += atributo_individual
             else:
                 ciudades_filtradas[ciudad] = [1,atributo_individual]
+
     return ciudades_filtradas
 
 
@@ -214,7 +215,7 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades con mayor promedio
     de indice de polvo.
     '''
-    ciudades_promedios = mayores_promedios(promedio(filtrar_por_año_y_suma(tabla,anio,"Dust_ug_m3")))
+    ciudades_promedios = mayores_promedios(promedio(filtrar_por_anio_y_suma(tabla,anio,"Dust_ug_m3")))
             
     return ciudades_promedios
 
@@ -230,9 +231,9 @@ def fecha_str(fecha: tuple) -> str:
              "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
     ind_mes = fecha[1] - 1
     mes_str = meses[ind_mes]
-    año_str = str(fecha[0])
+    anio_str = str(fecha[0])
 
-    return mes_str + " " + año_str
+    return mes_str + " " + anio_str
 
 
 def elegir_color(prom_UV: float) -> str:
@@ -338,8 +339,32 @@ def ciudad_america(ciudad:str)->bool:
     lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
     return ciudad in lista_ciudades_america
 
+def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
+    '''dada una tabla devuelve una version reducida que incluye los datos unicamente de las ciudades de América'''
+    nueva=[]
+    for fila in tabla:
+        if ciudad_america(fila['City']):
+            nueva.append(fila)
+    return nueva
 
-def ejecutar_pregunta1(tabla):
+def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
+    '''
+    representaremos los "mayores promedios" de las ciudades como
+    dicccionarios de la forma {"ciudades": [nombres_ciudades], "Promedio": [promedios_pm25]}. 
+    Donde las "nombres_ciudades" son strings y "promedios_pm25" son float. Ambas listas 
+    son de 5 elementos
+
+    tabla int -> mayores promedios
+    
+    Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades de america on mayor promedio de PM 2.5.
+    '''
+    tabla_america = filtrar_ciudades_america(tabla)
+    ciudades_promedios = mayores_promedios(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")))
+            
+    return ciudades_promedios
+
+
+def ejecutar_pregunta1(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 1 en la pagina
     '''
@@ -348,7 +373,7 @@ def ejecutar_pregunta1(tabla):
     st.table(pregunta_1(tabla, 2025))
 
 
-def ejecutar_pregunta2(tabla):
+def ejecutar_pregunta2(tabla: list[dict]):
     '''
     Permite la entrada de la fecha y produce los componentes de la pregunta 2 en la pagina
     '''
@@ -365,6 +390,19 @@ def ejecutar_pregunta2(tabla):
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
+def ejecutar_pregunta3(tabla: list[dict]):
+    '''
+    Produce los componentes de la pregunta 3 en la pagina
+    '''
+    dic= pregunta3(tabla,2025)
+    x=dic["ciudades"]
+    y=dic["promedios"]
+    plt.bar(x,y)
+    plt.title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
+    plt.xlabel("ciudades")
+    plt.ylabel("promedios")
+    plt.show()
+
 
 def ejecutar_programa(tabla: list[dict]):
     '''
@@ -378,7 +416,8 @@ def ejecutar_programa(tabla: list[dict]):
     if preg_2.open:
         ejecutar_pregunta2(tabla)
 
-        
+    if preg_3.open:
+        ejecutar_pregunta3(tabla)
 
 
 def main():
