@@ -452,23 +452,51 @@ def ejecutar_pregunta3(tabla: list[dict]):
     st.pyplot(fig)
 
 
-def listar_ciudades(tabla: list[dict]) -> list[str]:
+def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     '''
-    Representamos una "lista de ciudades" como una lista de de strings,
-    donde cada uno representa el nombre de una ciudad.
+    tabla atributo -> lista
 
-    tabla -> lista de ciudades
-
-    Dada una "tabla", devuelve una "lista de ciudades".
+    Dada una "tabla", devuelve una lista de los elementos que corresponde a ese atributo
+    sin repetir elementos.
     '''
-    lista_ciudades = []
+    lista = []
 
     for fila in tabla:
-        ciudad = fila["City"]
-        if ciudad not in lista_ciudades:
-            lista_ciudades.append(ciudad)
+        valor = fila[atributo]
+        if valor not in lista:
+            lista.append(valor)
     
-    return lista_ciudades
+    return lista
+
+
+def ejecutar_pregunta5(tabla: list[dict]):
+    st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
+
+    meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
+             "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
+             "Abril 2026", "Mayo 2026"]
+
+    opcion_1 = st.selectbox("Elija un mes:", meses)
+
+    ciudades = listar_por_atributo(tabla, "City")
+
+    opcion_2 = st.selectbox("Elija una ciudad:", ciudades)
+    st.write("Componentes del aire de ", opcion_2, " en el mes de ", opcion_1)
+
+    fig, ax = plt.subplots(figsize = (6,3))
+
+    componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
+                   "Ozone_ug_m3", "Dust_ug_m3"]
+
+    promedios_ej = [35.2,34.8,546.0,68.6,37.0,10.0]
+
+    pie = ax.pie(promedios_ej, textprops = dict(size = 5))
+
+    ax.legend(componentes, title = "Componentes",
+              loc = "center left", bbox_to_anchor=(1, 0, 0.5, 1))
+
+    st.pyplot(fig)
+
 
 
 def ejecutar_programa(tabla: list[dict]):
@@ -486,18 +514,7 @@ def ejecutar_programa(tabla: list[dict]):
     if preg_4.open:
         ejecutar_pregunta4(tabla)
     if preg_5.open:
-        st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
-
-        meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
-                 "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
-                 "Abril 2026", "Mayo 2026"]
-
-        opcion_1 = st.selectbox("Elija un mes:", meses)
-
-        ciudades = listar_ciudades(tabla)
-
-        opcion_2 = st.selectbox("Elija una ciudad:", ciudades)
-        st.write("Componentes del aire de ", opcion_2, " en el mes de ", opcion_1)
+        ejecutar_pregunta5(tabla)
 
 
 def main():
