@@ -186,6 +186,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
 def filtrar_por_anio_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
+    la misma es la que se usa para luego aplicar la funcion promedio
     """
     ciudades_filtradas = {}
     for fila in tabla:
@@ -395,6 +396,46 @@ def ejecutar_pregunta2(tabla: list[dict]):
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
+def filtrar_por_ubicación(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
+    '''
+    Recibe una tabla y la filtra según latitud inferior y superior, y longitud inferior y superior.
+    Produce un un diccionario de la forma {ciudad : cantidad de eventos catastroficos}
+    '''
+    tabla_filtrada={}
+    for entrada in tabla:
+        if lat_inf < entrada["Latitude"] and lat_sup > entrada["Latitude"] and long_inf < entrada["Longitude"] and long_sup > entrada["Longitude"]: #verifica si las coordenadas son correctas
+            if entrada["City"] in tabla_filtrada:
+                tabla_filtrada[entrada["City"]]+=entrada["Hazardous_Event"]
+            else:
+                tabla_filtrada[entrada["City"]] = entrada["Hazardous_Event"]
+    return tabla_filtrada
+
+
+def confirmar_datos(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int):
+    '''
+    Esta función toma los valores de entrada del usuario de la pregunta 3, verifica que sean válidos y produce la tabla de valores. 
+    '''
+    if lat_inf>lat_sup or long_inf>long_sup:
+        st.write("Valores inválidos.")
+    else:
+        st.table(mayores_promedios(filtrar_por_ubicación(tabla,lat_sup,lat_inf,long_inf,long_sup)))
+
+
+
+
+def ejecutar_pregunta4(tabla):
+    
+   st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con catástrofes naturales en 2025?")
+   st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superor y la longitud inferior sea menor a la longitud superior.")
+   latitud_inferior= st.slider("Latitud Inferior",-90,90)
+   latitud_superior= st.slider("Latitud Superior",-90,90)
+   longitud_inferior=st.slider("Longitud Inferior",-180,180)
+   longitud_superior=st.slider("Longitud Superior",-180,180)
+   def callback():
+    return confirmar_datos(tabla, latitud_superior, latitud_inferior, longitud_inferior, longitud_superior)
+   boton= st.button("Buscar",None,None, callback)
+
+
 def ejecutar_pregunta3(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 3 en la pagina
@@ -413,14 +454,14 @@ def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
     '''
-    preg_1, preg_2, preg_3, preg_4, preg_5, preg_6 = st.tabs(["Pregunta 1", "Pregunta 2", "Pregunta 3", "Pregunta 4", "Pregunta 5", "Pregunta 6"], on_change = "rerun")
-
+    preg_1, preg_2, preg_3, preg_4, preg_5, preg_6= st.tabs(["Pregunta 1", "Pregunta 2", "Pregunta 3", "Pregunta 4", "Pregunta 5", "Pregunta 6"], on_change = "rerun")
+    
     if preg_1.open:
         ejecutar_pregunta1(tabla)
-    
     if preg_2.open:
         ejecutar_pregunta2(tabla)
-
+    if preg_4.open:
+        ejecutar_pregunta4(tabla)
     if preg_3.open:
         ejecutar_pregunta3(tabla)
     
