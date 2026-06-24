@@ -367,9 +367,6 @@ def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     return ciudades_promedios
 
 
-
-
-
 def ejecutar_pregunta1(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 1 en la pagina
@@ -395,6 +392,7 @@ def ejecutar_pregunta2(tabla: list[dict]):
     ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
+
 
 def filtrar_por_ubicación(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
     '''
@@ -450,6 +448,25 @@ def ejecutar_pregunta3(tabla: list[dict]):
     plt.show()
 
 
+def listar_ciudades(tabla: list[dict]) -> list[str]:
+    '''
+    Representamos una "lista de ciudades" como una lista de de strings,
+    donde cada uno representa el nombre de una ciudad.
+
+    tabla -> lista de ciudades
+
+    Dada una "tabla", devuelve una "lista de ciudades".
+    '''
+    lista_ciudades = []
+
+    for fila in tabla:
+        ciudad = fila["City"]
+        if ciudad not in lista_ciudades:
+            lista_ciudades.append(ciudad)
+    
+    return lista_ciudades
+
+
 def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
@@ -460,11 +477,10 @@ def ejecutar_programa(tabla: list[dict]):
         ejecutar_pregunta1(tabla)
     if preg_2.open:
         ejecutar_pregunta2(tabla)
-    if preg_4.open:
-        ejecutar_pregunta4(tabla)
     if preg_3.open:
         ejecutar_pregunta3(tabla)
-    
+    if preg_4.open:
+        ejecutar_pregunta4(tabla)
     if preg_5.open:
         st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
 
@@ -474,7 +490,7 @@ def ejecutar_programa(tabla: list[dict]):
 
         opcion_1 = st.selectbox("Elija un mes:", meses)
 
-        ciudades = ["Buenos Aires", "Tokyo", "Mexico City", "Beijing"]
+        ciudades = listar_ciudades(tabla)
 
         opcion_2 = st.selectbox("Elija una ciudad:", ciudades)
         st.write("Componentes del aire de ", opcion_2, " en el mes de ", opcion_1)
