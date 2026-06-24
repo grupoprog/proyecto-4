@@ -339,6 +339,7 @@ def ciudad_america(ciudad:str)->bool:
     lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
     return ciudad in lista_ciudades_america
 
+
 def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
     '''dada una tabla devuelve una version reducida que incluye los datos unicamente de las ciudades de América'''
     nueva=[]
@@ -346,6 +347,7 @@ def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
         if ciudad_america(fila['City']):
             nueva.append(fila)
     return nueva
+
 
 def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
@@ -362,6 +364,9 @@ def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     ciudades_promedios = mayores_promedios(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")))
             
     return ciudades_promedios
+
+
+
 
 
 def ejecutar_pregunta1(tabla: list[dict]):
@@ -383,7 +388,7 @@ def ejecutar_pregunta2(tabla: list[dict]):
              "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
              "Abril 2026", "Mayo 2026"]
     
-    opcion = st.selectbox("Elija un mes", meses)
+    opcion = st.selectbox("Elija un mes:", meses)
     st.write("Mapa del promedio de UV en el mes de", opcion)
         
     ubicaciones_promedios = filtrar_ubicacionesXmes(tabla, opcion)
@@ -418,6 +423,20 @@ def ejecutar_programa(tabla: list[dict]):
 
     if preg_3.open:
         ejecutar_pregunta3(tabla)
+    
+    if preg_5.open:
+        st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
+
+        meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
+                 "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
+                 "Abril 2026", "Mayo 2026"]
+
+        opcion_1 = st.selectbox("Elija un mes:", meses)
+
+        ciudades = ["Buenos Aires", "Tokyo", "Mexico City", "Beijing"]
+
+        opcion_2 = st.selectbox("Elija una ciudad:", ciudades)
+        st.write("Componentes del aire de ", opcion_2, " en el mes de ", opcion_1)
 
 
 def main():
