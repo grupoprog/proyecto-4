@@ -181,6 +181,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
                 count += 1
     return nuevo_dic
 
+
 def filtrar_por_año_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
@@ -199,6 +200,8 @@ def filtrar_por_año_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,floa
             else:
                 ciudades_filtradas[ciudad] = [1,atributo_individual]
     return ciudades_filtradas
+
+
 def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
     representaremos los "mayores promedios" de las ciudades como
@@ -215,6 +218,7 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
             
     return ciudades_promedios
 
+
 def fecha_str(fecha: tuple) -> str:
     '''
     Fecha(tupla) -> Fecha("Mes año")
@@ -229,6 +233,7 @@ def fecha_str(fecha: tuple) -> str:
     año_str = str(fecha[0])
 
     return mes_str + " " + año_str
+
 
 def elegir_color(prom_UV: float) -> str:
     '''
@@ -259,6 +264,7 @@ def elegir_color(prom_UV: float) -> str:
         color = "#C300FFC6"
     
     return color
+
 
 def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
     '''
@@ -333,7 +339,6 @@ def ciudad_america(ciudad:str)->bool:
     return ciudad in lista_ciudades_america
 
 
-
 def ejecutar_pregunta1(tabla):
     '''
     Produce los componentes de la pregunta 1 en la pagina
@@ -348,9 +353,11 @@ def ejecutar_pregunta2(tabla):
     Permite la entrada de la fecha y produce los componentes de la pregunta 2 en la pagina
     '''
     st.title("¿Cuál es el promedio de índice UV que tiene una ciudad en un mes X?")
+
     meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
              "Noviembre 2025", "Diciembre 2025", "Enero 2026","Febrero 2026", "Marzo 2026",
              "Abril 2026", "Mayo 2026"]
+    
     opcion = st.selectbox("Elija un mes", meses)
     st.write("Mapa del promedio de UV en el mes de", opcion)
         
@@ -358,17 +365,20 @@ def ejecutar_pregunta2(tabla):
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
+
 def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
     '''
-    preg_1, preg_2 = st.tabs(["Pregunta 1", "Pregunta 2"], on_change = "rerun")
+    preg_1, preg_2, preg_3, preg_4, preg_5, preg_6 = st.tabs(["Pregunta 1", "Pregunta 2", "Pregunta 3", "Pregunta 4", "Pregunta 5", "Pregunta 6"], on_change = "rerun")
 
     if preg_1.open:
         ejecutar_pregunta1(tabla)
     
     if preg_2.open:
         ejecutar_pregunta2(tabla)
+
+        
 
 
 def main():
