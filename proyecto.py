@@ -183,7 +183,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     return nuevo_dic
 
 
-def filtrar_por_año_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
+def filtrar_por_anio_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
     """
@@ -394,7 +394,7 @@ def ejecutar_pregunta3(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 3 en la pagina
     '''
-    dic= pregunta3(tabla,2025)
+    dic= pregunta_3(tabla,2025)
     x=dic["ciudades"]
     y=dic["promedios"]
     plt.bar(x,y)
