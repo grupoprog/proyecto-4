@@ -183,7 +183,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     return nuevo_dic
 
 
-def filtrar_por_anio_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
+def filtrar_por_anio_y_suma(tabla: list[dict],anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
     la misma es la que se usa para luego aplicar la funcion promedio
@@ -469,7 +469,62 @@ def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     return lista
 
 
+def filtar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha: str) -> dict[str: float]:
+    '''
+    tabla atributo fecha("mes año") -> {ciudad: promedio}
+
+    Dada una tabla, un atributo y una fecha de la forma "mes año", devuelve un diccionario
+    cuyas claves son los nombres de las ciudades y sus valores son el promedio
+    correspondiente al atributo de la ciudad en la fecha dada.
+    '''
+    ciudades_filtradas = {}
+    for fila in tabla:
+        fecha_fila = fecha_str(fila["Timestamp"])
+        componente = fila[atributo]
+        ciudad = fila["City"]
+
+        if fecha == fecha_fila:
+            if ciudad in ciudades_filtradas:
+                ciudades_filtradas[ciudad][0] += 1
+                ciudades_filtradas[ciudad][1] += componente
+            else:
+                ciudades_filtradas[ciudad] = [1,componente]
+    
+    promedio_ciudades = promedio(ciudades_filtradas)
+
+    return promedio_ciudades
+
+
+def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[list[float]]:
+    '''
+    tabla fecha -> {ciudad: [promedios]}
+
+    Dada una tabla y una fecha de la forma "mes año", devuelve un diccionario cuyas claves son
+    los nombres de las ciudades y sus valores son listas (ordenadas) de los promedios de
+    las componentes del aire correspondientes a la misma en la fecha dada.
+    '''
+    dic = {}
+    componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
+                   "Ozone_ug_m3", "Dust_ug_m3"]
+    
+    for componente in componentes:
+        promedios_componente = filtar_promedio_ciudades_por_fecha(tabla,componente,fecha)
+
+        for ciudad in promedios_componente:
+            promedio = promedios_componente[ciudad]
+
+            if ciudad in dic:
+                dic[ciudad].append(promedio)
+            else:
+                dic[ciudad] = [promedio]
+    
+    return dic
+
+
 def ejecutar_pregunta5(tabla: list[dict]):
+    '''
+    Permite la entrada del mes y ciudad deseada y produce la ejecución pregunta 5
+    '''
     st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
 
     meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
@@ -490,7 +545,9 @@ def ejecutar_pregunta5(tabla: list[dict]):
 
     promedios_ej = [35.2,34.8,546.0,68.6,37.0,10.0]
 
-    pie = ax.pie(promedios_ej, textprops = dict(size = 5))
+    promedios = promedios_componentes_de_ciudades(tabla,opcion_1)[opcion_2]
+
+    ax.pie(promedios, textprops = dict(size = 5))
 
     ax.legend(componentes, title = "Componentes",
               loc = "center left", bbox_to_anchor=(1, 0, 0.5, 1))
