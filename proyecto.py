@@ -449,7 +449,7 @@ def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
     '''
-    preg_1, preg_2, preg_3, preg_4, preg_5, preg_6 , preg_3= st.tabs(["Pregunta 1", "Pregunta 2","Pregunta 3",, "Pregunta 3", "Pregunta 4", "Pregunta 5", "Pregunta 6"], on_change = "rerun")
+    preg_1, preg_2, preg_3, preg_4, preg_5, preg_6= st.tabs(["Pregunta 1", "Pregunta 2", "Pregunta 3", "Pregunta 4", "Pregunta 5", "Pregunta 6"], on_change = "rerun")
     
     if preg_1.open:
         ejecutar_pregunta1(tabla)
