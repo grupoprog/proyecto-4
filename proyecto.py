@@ -438,6 +438,8 @@ def ejecutar_pregunta3(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 3 en la pagina
     '''
+    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
+
     dic= pregunta_3(tabla,2025)
     x=dic["ciudades"]
     y=dic["promedios"]
@@ -457,7 +459,7 @@ def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     '''
     tabla atributo -> lista
 
-    Dada una "tabla", devuelve una lista de los elementos que corresponde a ese atributo
+    Dada una "tabla" y un "atributo", devuelve una lista de los elementos que corresponde a ese atributo
     sin repetir elementos.
     '''
     lista = []
@@ -541,14 +543,12 @@ def ejecutar_pregunta5(tabla: list[dict]):
 
     fig, ax = plt.subplots(figsize = (6,3))
 
+    promedios = promedios_componentes_de_ciudades(tabla,opcion_1)[opcion_2]
+
     componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
                    "Ozone_ug_m3", "Dust_ug_m3"]
 
-    promedios_ej = [35.2,34.8,546.0,68.6,37.0,10.0]
-
-    promedios = promedios_componentes_de_ciudades(tabla,opcion_1)[opcion_2]
-
-    ax.pie(promedios, textprops = dict(size = 5))
+    ax.pie(promedios, autopct = "%1.1f%%\n", pctdistance = 1.17, textprops = dict(size = 5))
 
     ax.legend(componentes, title = "Componentes",
               loc = "center left", bbox_to_anchor=(1, 0, 0.5, 1))
