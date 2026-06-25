@@ -367,6 +367,27 @@ def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     return ciudades_promedios
 
 
+def ejecutar_pregunta3(tabla: list[dict]):
+    '''
+    Produce los componentes de la pregunta 3 en la pagina
+    '''
+    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
+
+    dic= pregunta_3(tabla,2025)
+    x=dic["ciudades"]
+    y=dic["promedios"]
+    bar_colors = ['tab:blue', 'tab:red', 'tab:orange']
+
+    fig, ax = plt.subplots()
+    ax.bar(x, y, color=bar_colors)
+
+    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
+    ax.set_xlabel("ciudades")
+    ax.set_ylabel("promedios")
+
+    st.pyplot(fig)
+
+
 def ejecutar_pregunta1(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 1 en la pagina
@@ -414,7 +435,7 @@ def confirmar_datos(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int):
     Esta función toma los valores de entrada del usuario de la pregunta 4, verifica que sean válidos y produce la tabla de valores,
     lista para ser renderizada en la página
     '''
-    if lat_inf>lat_sup or long_inf>long_sup:
+    if lat_inf>=lat_sup or long_inf>=long_sup:
         st.write("Valores inválidos.")
     else:
         st.table(mayores_promedios(filtrar_por_ubicacion(tabla,lat_sup,lat_inf,long_inf,long_sup)))
@@ -440,27 +461,6 @@ def ejecutar_pregunta4(tabla):
             longitud_superior
         )
         st.write(resultado)
-
-
-def ejecutar_pregunta3(tabla: list[dict]):
-    '''
-    Produce los componentes de la pregunta 3 en la pagina
-    '''
-    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
-
-    dic= pregunta_3(tabla,2025)
-    x=dic["ciudades"]
-    y=dic["promedios"]
-    bar_colors = ['tab:blue', 'tab:red', 'tab:orange']
-
-    fig, ax = plt.subplots()
-    ax.bar(x, y, color=bar_colors)
-
-    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
-    ax.set_xlabel("ciudades")
-    ax.set_ylabel("promedios")
-
-    st.pyplot(fig)
 
 
 def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
@@ -562,7 +562,6 @@ def ejecutar_pregunta5(tabla: list[dict]):
               loc = "center left", bbox_to_anchor=(1, 0, 0.5, 1))
 
     st.pyplot(fig)
-
 
 
 def ejecutar_programa(tabla: list[dict]):
