@@ -333,10 +333,7 @@ def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
 
 
 def ciudad_america(ciudad:str)->bool:
-    '''dada una ciudad devuelve True si es de America
-    ciudad_america('Mexico City') == True
-    ciudad_america('Tokyo') == False
-    '''
+    '''dada una ciudad devuelve True si es de America'''
     lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
     return ciudad in lista_ciudades_america
 
@@ -348,7 +345,6 @@ def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
         if ciudad_america(fila['City']):
             nueva.append(fila)
     return nueva
-
 
 def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
@@ -441,7 +437,7 @@ def ejecutar_pregunta3(tabla: list[dict]):
     dic= pregunta_3(tabla,2025)
     x=dic["ciudades"]
     y=dic["promedios"]
-    bar_colors = ['tab:blue', 'tab:red', 'tab:orange']
+    bar_colors = ['#FF3434', '#FF8059', '#FF9756','#F5AD6A','#FFEB7C']
 
     fig, ax = plt.subplots()
     ax.bar(x, y, color=bar_colors)
