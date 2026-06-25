@@ -394,7 +394,7 @@ def ejecutar_pregunta2(tabla: list[dict]):
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
-def filtrar_por_ubicación(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
+def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
     '''
     Recibe una tabla y la filtra según latitud inferior y superior, y longitud inferior y superior.
     Produce un un diccionario de la forma {ciudad : cantidad de eventos catastroficos}
@@ -411,27 +411,35 @@ def filtrar_por_ubicación(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:i
 
 def confirmar_datos(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int):
     '''
-    Esta función toma los valores de entrada del usuario de la pregunta 3, verifica que sean válidos y produce la tabla de valores. 
+    Esta función toma los valores de entrada del usuario de la pregunta 4, verifica que sean válidos y produce la tabla de valores,
+    lista para ser renderizada en la página
     '''
     if lat_inf>lat_sup or long_inf>long_sup:
         st.write("Valores inválidos.")
     else:
-        st.table(mayores_promedios(filtrar_por_ubicación(tabla,lat_sup,lat_inf,long_inf,long_sup)))
-
-
+        st.table(mayores_promedios(filtrar_por_ubicacion(tabla,lat_sup,lat_inf,long_inf,long_sup)))
 
 
 def ejecutar_pregunta4(tabla):
-    
-   st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con catástrofes naturales en 2025?")
-   st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superor y la longitud inferior sea menor a la longitud superior.")
-   latitud_inferior= st.slider("Latitud Inferior",-90,90)
-   latitud_superior= st.slider("Latitud Superior",-90,90)
-   longitud_inferior=st.slider("Longitud Inferior",-180,180)
-   longitud_superior=st.slider("Longitud Superior",-180,180)
-   def callback():
-    return confirmar_datos(tabla, latitud_superior, latitud_inferior, longitud_inferior, longitud_superior)
-   boton= st.button("Buscar",None,None, callback)
+    """
+    Funcion encargada de el ingreso de datos del usuario y la renderización de los componentes de la pregunta 4.
+    """
+    st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con catástrofes naturales en 2025?")
+    st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superior y la longitud inferior sea menor a la longitud superior.")
+    latitud_inferior = st.slider("Latitud Inferior", -90, 90)
+    latitud_superior = st.slider("Latitud Superior", -90, 90)
+    longitud_inferior = st.slider("Longitud Inferior", -180, 180)
+    longitud_superior = st.slider("Longitud Superior", -180, 180)
+
+    if st.button("Buscar"):
+        resultado = confirmar_datos(
+            tabla,
+            latitud_superior,
+            latitud_inferior,
+            longitud_inferior,
+            longitud_superior
+        )
+        st.write(resultado)
 
 
 def ejecutar_pregunta3(tabla: list[dict]):
