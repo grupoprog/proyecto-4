@@ -183,7 +183,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     return nuevo_dic
 
 
-def filtrar_por_anio_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
+def filtrar_por_anio_y_suma(tabla: list[dict],anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
     la misma es la que se usa para luego aplicar la funcion promedio
@@ -390,7 +390,7 @@ def ejecutar_pregunta2(tabla: list[dict]):
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 
-def filtrar_por_ubicación(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
+def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
     '''
     Recibe una tabla y la filtra según latitud inferior y superior, y longitud inferior y superior.
     Produce un un diccionario de la forma {ciudad : cantidad de eventos catastroficos}
@@ -407,33 +407,43 @@ def filtrar_por_ubicación(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:i
 
 def confirmar_datos(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int):
     '''
-    Esta función toma los valores de entrada del usuario de la pregunta 3, verifica que sean válidos y produce la tabla de valores. 
+    Esta función toma los valores de entrada del usuario de la pregunta 4, verifica que sean válidos y produce la tabla de valores,
+    lista para ser renderizada en la página
     '''
     if lat_inf>lat_sup or long_inf>long_sup:
         st.write("Valores inválidos.")
     else:
-        st.table(mayores_promedios(filtrar_por_ubicación(tabla,lat_sup,lat_inf,long_inf,long_sup)))
-
-
+        st.table(mayores_promedios(filtrar_por_ubicacion(tabla,lat_sup,lat_inf,long_inf,long_sup)))
 
 
 def ejecutar_pregunta4(tabla):
-    
-   st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con catástrofes naturales en 2025?")
-   st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superor y la longitud inferior sea menor a la longitud superior.")
-   latitud_inferior= st.slider("Latitud Inferior",-90,90)
-   latitud_superior= st.slider("Latitud Superior",-90,90)
-   longitud_inferior=st.slider("Longitud Inferior",-180,180)
-   longitud_superior=st.slider("Longitud Superior",-180,180)
-   def callback():
-    return confirmar_datos(tabla, latitud_superior, latitud_inferior, longitud_inferior, longitud_superior)
-   boton= st.button("Buscar",None,None, callback)
+    """
+    Funcion encargada de el ingreso de datos del usuario y la renderización de los componentes de la pregunta 4.
+    """
+    st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con catástrofes naturales en 2025?")
+    st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superior y la longitud inferior sea menor a la longitud superior.")
+    latitud_inferior = st.slider("Latitud Inferior", -90, 90)
+    latitud_superior = st.slider("Latitud Superior", -90, 90)
+    longitud_inferior = st.slider("Longitud Inferior", -180, 180)
+    longitud_superior = st.slider("Longitud Superior", -180, 180)
+
+    if st.button("Buscar"):
+        resultado = confirmar_datos(
+            tabla,
+            latitud_superior,
+            latitud_inferior,
+            longitud_inferior,
+            longitud_superior
+        )
+        st.write(resultado)
 
 
 def ejecutar_pregunta3(tabla: list[dict]):
     '''
     Produce los componentes de la pregunta 3 en la pagina
     '''
+    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
+
     dic= pregunta_3(tabla,2025)
     x=dic["ciudades"]
     y=dic["promedios"]
@@ -453,7 +463,7 @@ def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     '''
     tabla atributo -> lista
 
-    Dada una "tabla", devuelve una lista de los elementos que corresponde a ese atributo
+    Dada una "tabla" y un "atributo", devuelve una lista de los elementos que corresponde a ese atributo
     sin repetir elementos.
     '''
     lista = []
@@ -466,7 +476,62 @@ def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     return lista
 
 
+def filtar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha: str) -> dict[str: float]:
+    '''
+    tabla atributo fecha("mes año") -> {ciudad: promedio}
+
+    Dada una tabla, un atributo y una fecha de la forma "mes año", devuelve un diccionario
+    cuyas claves son los nombres de las ciudades y sus valores son el promedio
+    correspondiente al atributo de la ciudad en la fecha dada.
+    '''
+    ciudades_filtradas = {}
+    for fila in tabla:
+        fecha_fila = fecha_str(fila["Timestamp"])
+        componente = fila[atributo]
+        ciudad = fila["City"]
+
+        if fecha == fecha_fila:
+            if ciudad in ciudades_filtradas:
+                ciudades_filtradas[ciudad][0] += 1
+                ciudades_filtradas[ciudad][1] += componente
+            else:
+                ciudades_filtradas[ciudad] = [1,componente]
+    
+    promedio_ciudades = promedio(ciudades_filtradas)
+
+    return promedio_ciudades
+
+
+def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[list[float]]:
+    '''
+    tabla fecha -> {ciudad: [promedios]}
+
+    Dada una tabla y una fecha de la forma "mes año", devuelve un diccionario cuyas claves son
+    los nombres de las ciudades y sus valores son listas (ordenadas) de los promedios de
+    las componentes del aire correspondientes a la misma en la fecha dada.
+    '''
+    dic = {}
+    componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
+                   "Ozone_ug_m3", "Dust_ug_m3"]
+    
+    for componente in componentes:
+        promedios_componente = filtar_promedio_ciudades_por_fecha(tabla,componente,fecha)
+
+        for ciudad in promedios_componente:
+            promedio = promedios_componente[ciudad]
+
+            if ciudad in dic:
+                dic[ciudad].append(promedio)
+            else:
+                dic[ciudad] = [promedio]
+    
+    return dic
+
+
 def ejecutar_pregunta5(tabla: list[dict]):
+    '''
+    Permite la entrada del mes y ciudad deseada y produce la ejecución pregunta 5
+    '''
     st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
 
     meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
@@ -482,12 +547,12 @@ def ejecutar_pregunta5(tabla: list[dict]):
 
     fig, ax = plt.subplots(figsize = (6,3))
 
+    promedios = promedios_componentes_de_ciudades(tabla,opcion_1)[opcion_2]
+
     componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
                    "Ozone_ug_m3", "Dust_ug_m3"]
 
-    promedios_ej = [35.2,34.8,546.0,68.6,37.0,10.0]
-
-    pie = ax.pie(promedios_ej, textprops = dict(size = 5))
+    ax.pie(promedios, autopct = "%1.1f%%\n", pctdistance = 1.17, textprops = dict(size = 5))
 
     ax.legend(componentes, title = "Componentes",
               loc = "center left", bbox_to_anchor=(1, 0, 0.5, 1))
