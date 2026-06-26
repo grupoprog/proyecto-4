@@ -560,6 +560,56 @@ def ejecutar_pregunta5(tabla: list[dict]):
     st.pyplot(fig)
 
 
+def promedios_monoxido_por_mes(ciudad:str,tabla:list[dict])->list[float]:
+    """
+    Recibe una ciudad y una tabla y produce una lista de la forma [prom 01/25,prom 02/25, ... ,prom 05/26]}
+    es decir para una ciudad dada, calcula el promedio de monoxido de carbono para cada mes (entre Mayo 2025-Mayo 2026)
+    y lo va agregando a una lista de forma ordenada
+    """
+    meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", "Noviembre 2025", "Diciembre 2025", 
+    "Enero 2026","Febrero 2026", "Marzo 2026", "Abril 2026", "Mayo 2026"]
+    l=[]
+    for mes in meses:
+        dic=promedios_componentes_de_ciudades(tabla,mes)
+        prom_monoxido_por_mes=dic[ciudad][2]
+        #al aplicar promedios_componentes_de_ciudades, esta devuelve un diccionario donde cada ciudad queda asociada a una lista de
+        #promedios de cada uno de los indices y el monoxido de carbono esta en la posicion 2
+        #{'ciudad':["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3","Ozone_ug_m3", "Dust_ug_m3"]}
+        l.append(prom_monoxido_por_mes)
+    return l
+
+def pregunta_6(tabla: list[dict])->dict[str:list[float]]:
+    """
+    Recibe una tabla y un atributo y produce un diccionario de la forma {ciudad:[prom 01/25,prom 02/25, ... ,prom 05/26]}
+    es decir cada ciudad queda asociada a una lista donde cada elemento de esta sera el promedio de monoxido de carbono correspondiente a cada mes
+    """
+    ciudades = listar_por_atributo(tabla, "City")
+    nuevo_dic={}
+    for ciudad in ciudades:
+        nuevo_dic[ciudad]=promedios_monoxido_por_mes(ciudad,tabla)
+    return nuevo_dic
+
+def ejecutar_pregunta6(tabla: list[dict]):
+    '''Produce los componentes de la pregunta 6 en la pagina'''
+    st.title("¿Cuál es el promedio de monóxido de carbono en X ciudad a lo largo de los meses?")
+
+    ciudades = listar_por_atributo(tabla, "City")
+    meses = ["5\n25", "6\n25", "7\n25","8\n25", "9\n25", "10\n25", "11\n25", "12\n25", "1\n26","2\n26", "3\n26", "4\n26", "5\n26"]
+
+    ciudad_elegida = st.selectbox("Elija una ciudad:", ciudades)
+
+    dic=pregunta_6(tabla)
+    x=meses
+    y=dic[ciudad_elegida]
+
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    ax.set(xlabel='meses', ylabel='promedio de monoxido de carbono', title='Evolución del promedio de monóxido de carbono durante Mayo 2025-Mayo 2026')
+    ax.grid()
+
+    st.pyplot(fig)
+
+
 def ejecutar_programa(tabla: list[dict]):
     '''
     Dada la tabla del dataset genera un link a la pagina web
@@ -576,7 +626,8 @@ def ejecutar_programa(tabla: list[dict]):
         ejecutar_pregunta4(tabla)
     if preg_5.open:
         ejecutar_pregunta5(tabla)
-
+    if preg_6.open:
+        ejecutar_pregunta6(tabla)
 
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
