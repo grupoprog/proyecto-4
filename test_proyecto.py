@@ -170,3 +170,8 @@ def test_filtrar_por_ubicacion():
     assert filtrar_por_ubicacion(tabla_de_prueba,90,-90,-180,180) == {'Delhi': 1, 'Beijing': 1, 'Mumbai': 0, 'Mexico City': 0, 'Moscow': 0}
     assert filtrar_por_ubicacion(tabla_de_prueba,-80,-90,170,180) == {}
     assert filtrar_por_ubicacion(tabla_de_prueba,21,19,71,73) == {'Mumbai': 0}
+
+def test_coordenadas_validas():
+    assert coordenadas_validas(12.2,7,-55,13) == False
+    assert coordenadas_validas(55,-1.3,125,120) == True
+    assert coordenadas_validas(0,0,0,0) == False

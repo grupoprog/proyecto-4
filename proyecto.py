@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------------------------------------------
+#POk por por# -------------------------------------------------------------------------------------------------------------------
 # Trabajo Practico Grupal: Calidad del aire en distintas ciudades del mundo y niveles de polución.
 # Catedra Programación II, 2C.
 # Grupo 4
@@ -409,15 +409,26 @@ def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:in
     return tabla_filtrada
 
 
-def confirmar_datos(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int):
+def coordenadas_validas(lat_sup:float,lat_inf:float,long_sup:float,long_inf:float)->bool:
+    '''
+    Interpretamos las coordenadas de latitud (entre -90 y 90) 
+    o longitud(entre -180 y 180) como floats.
+    recibe coordenadas que representa la latitud superior, inferior, la longitud
+    superior e inferior. Produce un booleano en funcion si la longitud inferior es menor
+    a la latitud superior y de igual manera con las longitudes.
+    '''
+    return lat_inf<lat_sup and long_inf<long_sup
+
+def confirmar_datos(tabla,lat_sup:float,lat_inf:float,long_inf:float,long_sup:float):
     '''
     Esta función toma los valores de entrada del usuario de la pregunta 4, verifica que sean válidos y produce la tabla de valores,
-    lista para ser renderizada en la página
+    lista para ser renderizada en la página.
     '''
-    if lat_inf>lat_sup or long_inf>long_sup:
-        st.write("Valores inválidos.")
-    else:
+    if coordenadas_validas(lat_sup,lat_inf,long_sup,long_inf):
         st.table(mayores_promedios(filtrar_por_ubicacion(tabla,lat_sup,lat_inf,long_inf,long_sup)))
+    else:
+        st.write("Valores inválidos.")
+        
 
 
 def ejecutar_pregunta4(tabla):
