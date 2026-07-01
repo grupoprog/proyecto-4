@@ -183,7 +183,7 @@ def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
     return nuevo_dic
 
 
-def filtrar_por_anio_y_suma(tabla,anio:int,atributo:str)->dict[str:list[int,float]]:
+def filtrar_por_anio_y_suma(tabla: list[dict],anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
     la misma es la que se usa para luego aplicar la funcion promedio
@@ -333,10 +333,7 @@ def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
 
 
 def ciudad_america(ciudad:str)->bool:
-    '''dada una ciudad devuelve True si es de America
-    ciudad_america('Mexico City') == True
-    ciudad_america('Tokyo') == False
-    '''
+    '''dada una ciudad devuelve True si es de America'''
     lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
     return ciudad in lista_ciudades_america
 
@@ -348,7 +345,6 @@ def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
         if ciudad_america(fila['City']):
             nueva.append(fila)
     return nueva
-
 
 def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
@@ -365,6 +361,27 @@ def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     ciudades_promedios = mayores_promedios(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")))
             
     return ciudades_promedios
+
+
+def ejecutar_pregunta3(tabla: list[dict]):
+    '''
+    Produce los componentes de la pregunta 3 en la pagina
+    '''
+    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
+
+    dic= pregunta_3(tabla,2025)
+    x=dic["ciudades"]
+    y=dic["promedios"]
+    bar_colors = ['#FF3434', '#FF8059', '#FF9756','#F5AD6A','#FFEB7C']
+
+    fig, ax = plt.subplots()
+    ax.bar(x, y, color=bar_colors)
+
+    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
+    ax.set_xlabel("ciudades")
+    ax.set_ylabel("promedios")
+
+    st.pyplot(fig)
 
 
 def ejecutar_pregunta1(tabla: list[dict]):
@@ -451,32 +468,13 @@ def ejecutar_pregunta4(tabla):
             longitud_superior
         )
         st.write(resultado)
-
-
-def ejecutar_pregunta3(tabla: list[dict]):
-    '''
-    Produce los componentes de la pregunta 3 en la pagina
-    '''
-    dic= pregunta_3(tabla,2025)
-    x=dic["ciudades"]
-    y=dic["promedios"]
-    bar_colors = ['tab:blue', 'tab:red', 'tab:orange']
-
-    fig, ax = plt.subplots()
-    ax.bar(x, y, color=bar_colors)
-
-    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
-    ax.set_xlabel("ciudades")
-    ax.set_ylabel("promedios")
-
-    st.pyplot(fig)
-
+        
 
 def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     '''
     tabla atributo -> lista
 
-    Dada una "tabla", devuelve una lista de los elementos que corresponde a ese atributo
+    Dada una "tabla" y un "atributo", devuelve una lista de los elementos que corresponde a ese atributo
     sin repetir elementos.
     '''
     lista = []
@@ -489,7 +487,62 @@ def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     return lista
 
 
+def filtar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha: str) -> dict[str: float]:
+    '''
+    tabla atributo fecha("mes año") -> {ciudad: promedio}
+
+    Dada una tabla, un atributo y una fecha de la forma "mes año", devuelve un diccionario
+    cuyas claves son los nombres de las ciudades y sus valores son el promedio
+    correspondiente al atributo de la ciudad en la fecha dada.
+    '''
+    ciudades_filtradas = {}
+    for fila in tabla:
+        fecha_fila = fecha_str(fila["Timestamp"])
+        componente = fila[atributo]
+        ciudad = fila["City"]
+
+        if fecha == fecha_fila:
+            if ciudad in ciudades_filtradas:
+                ciudades_filtradas[ciudad][0] += 1
+                ciudades_filtradas[ciudad][1] += componente
+            else:
+                ciudades_filtradas[ciudad] = [1,componente]
+    
+    promedio_ciudades = promedio(ciudades_filtradas)
+
+    return promedio_ciudades
+
+
+def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[list[float]]:
+    '''
+    tabla fecha -> {ciudad: [promedios]}
+
+    Dada una tabla y una fecha de la forma "mes año", devuelve un diccionario cuyas claves son
+    los nombres de las ciudades y sus valores son listas (ordenadas) de los promedios de
+    las componentes del aire correspondientes a la misma en la fecha dada.
+    '''
+    dic = {}
+    componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
+                   "Ozone_ug_m3", "Dust_ug_m3"]
+    
+    for componente in componentes:
+        promedios_componente = filtar_promedio_ciudades_por_fecha(tabla,componente,fecha)
+
+        for ciudad in promedios_componente:
+            promedio = promedios_componente[ciudad]
+
+            if ciudad in dic:
+                dic[ciudad].append(promedio)
+            else:
+                dic[ciudad] = [promedio]
+    
+    return dic
+
+
 def ejecutar_pregunta5(tabla: list[dict]):
+    '''
+    Permite la entrada del mes y ciudad deseada y produce la ejecución pregunta 5
+    '''
     st.title("¿Cuáles son las componentes del aire en X ciudad en un mes Y?")
 
     meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", 
@@ -505,18 +558,67 @@ def ejecutar_pregunta5(tabla: list[dict]):
 
     fig, ax = plt.subplots(figsize = (6,3))
 
+    promedios = promedios_componentes_de_ciudades(tabla,opcion_1)[opcion_2]
+
     componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
                    "Ozone_ug_m3", "Dust_ug_m3"]
 
-    promedios_ej = [35.2,34.8,546.0,68.6,37.0,10.0]
-
-    pie = ax.pie(promedios_ej, textprops = dict(size = 5))
+    ax.pie(promedios, autopct = "%1.1f%%\n", pctdistance = 1.17, textprops = dict(size = 5))
 
     ax.legend(componentes, title = "Componentes",
               loc = "center left", bbox_to_anchor=(1, 0, 0.5, 1))
 
     st.pyplot(fig)
 
+
+def promedios_monoxido_por_mes(ciudad:str,tabla:list[dict])->list[float]:
+    """
+    Recibe una ciudad y una tabla y produce una lista de la forma [prom 01/25,prom 02/25, ... ,prom 05/26]}
+    es decir para una ciudad dada, calcula el promedio de monoxido de carbono para cada mes (entre Mayo 2025-Mayo 2026)
+    y lo va agregando a una lista de forma ordenada
+    """
+    meses = ["Mayo 2025", "Junio 2025", "Julio 2025","Agosto 2025", "Septiembre 2025", "Octubre 2025", "Noviembre 2025", "Diciembre 2025", 
+    "Enero 2026","Febrero 2026", "Marzo 2026", "Abril 2026", "Mayo 2026"]
+    l=[]
+    for mes in meses:
+        dic=promedios_componentes_de_ciudades(tabla,mes)
+        prom_monoxido_por_mes=dic[ciudad][2]
+        #al aplicar promedios_componentes_de_ciudades, esta devuelve un diccionario donde cada ciudad queda asociada a una lista de
+        #promedios de cada uno de los indices y el monoxido de carbono esta en la posicion 2
+        #{'ciudad':["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3","Ozone_ug_m3", "Dust_ug_m3"]}
+        l.append(prom_monoxido_por_mes)
+    return l
+
+def pregunta_6(tabla: list[dict])->dict[str:list[float]]:
+    """
+    Recibe una tabla y un atributo y produce un diccionario de la forma {ciudad:[prom 01/25,prom 02/25, ... ,prom 05/26]}
+    es decir cada ciudad queda asociada a una lista donde cada elemento de esta sera el promedio de monoxido de carbono correspondiente a cada mes
+    """
+    ciudades = listar_por_atributo(tabla, "City")
+    nuevo_dic={}
+    for ciudad in ciudades:
+        nuevo_dic[ciudad]=promedios_monoxido_por_mes(ciudad,tabla)
+    return nuevo_dic
+
+def ejecutar_pregunta6(tabla: list[dict]):
+    '''Produce los componentes de la pregunta 6 en la pagina'''
+    st.title("¿Cuál es el promedio de monóxido de carbono en X ciudad a lo largo de los meses?")
+
+    ciudades = listar_por_atributo(tabla, "City")
+    meses = ["5\n25", "6\n25", "7\n25","8\n25", "9\n25", "10\n25", "11\n25", "12\n25", "1\n26","2\n26", "3\n26", "4\n26", "5\n26"]
+
+    ciudad_elegida = st.selectbox("Elija una ciudad:", ciudades)
+
+    dic=pregunta_6(tabla)
+    x=meses
+    y=dic[ciudad_elegida]
+
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    ax.set(xlabel='meses', ylabel='promedio de monoxido de carbono', title='Evolución del promedio de monóxido de carbono durante Mayo 2025-Mayo 2026')
+    ax.grid()
+
+    st.pyplot(fig)
 
 
 def ejecutar_programa(tabla: list[dict]):
@@ -535,7 +637,8 @@ def ejecutar_programa(tabla: list[dict]):
         ejecutar_pregunta4(tabla)
     if preg_5.open:
         ejecutar_pregunta5(tabla)
-
+    if preg_6.open:
+        ejecutar_pregunta6(tabla)
 
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
