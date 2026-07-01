@@ -127,57 +127,56 @@ def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
     
     return ciudades_filtradas
 
-def ordenar_primeros_5(dic:dict[str:list]) -> dict[str:list]:
+def ordenar_primeros_5(dic:dict[str:list],atributo:str) -> dict[str:list]:
     """
     Funcion auxiliar para ordenar las primeros 5 ciudades de la funcion mayores_promedios
     Recibe un dic["ciudades":List[String], "promedios":List[Number]
     y produce el mismo tipo pero ordena simultaneamente ambas listas del diccionario
     """
-    dic_aux={"ciudades":[dic["ciudades"][0]], "promedios":[dic["promedios"][0]]}
-    dic["ciudades"].pop(0)
-    dic["promedios"].pop(0) 
+    dic_aux={"Ciudades":[dic["Ciudades"][0]], atributo:[dic[atributo][0]]}
+    dic["Ciudades"].pop(0)
+    dic[atributo].pop(0) 
     for i in range(4):
-        for j in range(len(dic_aux["ciudades"])):
-            if dic["promedios"][i] > dic_aux["promedios"][j]:
-                dic_aux["promedios"].insert(j,dic["promedios"][i])
-                dic_aux["ciudades"].insert(j,dic["ciudades"][i])
+        for j in range(len(dic_aux["Ciudades"])):
+            if dic[atributo][i] > dic_aux[atributo][j]:
+                dic_aux[atributo].insert(j,dic[atributo][i])
+                dic_aux["Ciudades"].insert(j,dic["Ciudades"][i])
                 break
-        if dic["ciudades"][i] not in dic_aux["ciudades"]:
-            dic_aux["promedios"].append(dic["promedios"][i])
-            dic_aux["ciudades"].append(dic["ciudades"][i])
+        if dic["Ciudades"][i] not in dic_aux["Ciudades"]:
+            dic_aux[atributo].append(dic[atributo][i])
+            dic_aux["Ciudades"].append(dic["Ciudades"][i])
     return dic_aux
 
 
-def mayores_promedios(ciudades_promedios: dict[str:float]) -> dict[str:list]:
+def mayores_valores(ciudades_valores: dict[str:float], atributo:str) -> dict[str:list]:
     '''
-    Representamos los promedios de polvo de las ciudades (ciudades_promedios) como
-    diccionarios de la forma {ciudad: promedio_polvo}. donde promedio_polvo es un float > 0
-    Y los mayores promedios 
-
-    Recibe los promedio de polvo y produce los 5 mayores promedios de polvo ordenados de mayor a menor con la
-    lista de las ciudades tambien ordenada acorde a sus promedios
+    Toma un diccionario de la forma {"ciudad":valor} donde el valor puede ser de  distintas índoles
+    tales como promedios, suma de eventos peligrosos, etc.
+    Y toma un string representando el nombre de la columna de la tabla para la visualización
+    produce un diccionario de la forma {"ciudad":lista de ciudades, "atributo":lista de valores}
+    en donde los indices de cada lista se corresponden y los cuales son los 5 mayores valores
     '''
-    nuevo_dic = {"ciudades":[], "promedios":[]}
+    nuevo_dic = {"Ciudades":[], atributo:[]}
     cuenta = 0
     flag_ordenado = False
-    for ciudad in ciudades_promedios:
+    for ciudad in ciudades_valores:
         flag = False
-        cant_ciudades = len(nuevo_dic["ciudades"])
+        cant_ciudades = len(nuevo_dic["Ciudades"])
 
         if cuenta < 5 :
-            nuevo_dic["ciudades"].append(ciudad)
-            nuevo_dic["promedios"].append(ciudades_promedios[ciudad])
+            nuevo_dic["Ciudades"].append(ciudad)
+            nuevo_dic[atributo].append(ciudades_valores[ciudad])
             cuenta += 1
             
         else:
             if not flag_ordenado: #en el primer else se deben ordenar los primeros 5
-                nuevo_dic = ordenar_primeros_5(nuevo_dic)
+                nuevo_dic = ordenar_primeros_5(nuevo_dic, atributo)
                 flag_ordenado=True
             count = 0
-            for promedio in nuevo_dic["promedios"]:
-                if ciudades_promedios[ciudad] > promedio and not flag:
-                    nuevo_dic["promedios"] = nuevo_dic["promedios"][0:count] + [ciudades_promedios[ciudad]] + nuevo_dic["promedios"][count:4]
-                    nuevo_dic["ciudades"] = nuevo_dic["ciudades"][0:count] + [ciudad] + nuevo_dic["ciudades"][count:4]
+            for valor in nuevo_dic[atributo]:
+                if ciudades_valores[ciudad] > valor and not flag:
+                    nuevo_dic[atributo] = nuevo_dic[atributo][0:count] + [ciudades_valores[ciudad]] + nuevo_dic[atributo][count:4]
+                    nuevo_dic["Ciudades"] = nuevo_dic["Ciudades"][0:count] + [ciudad] + nuevo_dic["Ciudades"][count:4]
                     flag = True
                 count += 1
     return nuevo_dic
@@ -216,7 +215,7 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades con mayor promedio
     de indice de polvo.
     '''
-    ciudades_promedios = mayores_promedios(promedio(filtrar_por_anio_y_suma(tabla,anio,"Dust_ug_m3")))
+    ciudades_promedios = mayores_valores(promedio(filtrar_por_anio_y_suma(tabla,anio,"Dust_ug_m3")), "Promedios")
             
     return ciudades_promedios
 
@@ -358,7 +357,7 @@ def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
     Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades de america on mayor promedio de PM 2.5.
     '''
     tabla_america = filtrar_ciudades_america(tabla)
-    ciudades_promedios = mayores_promedios(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")))
+    ciudades_promedios = mayores_valores(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")),"Promedios")
             
     return ciudades_promedios
 
@@ -370,16 +369,16 @@ def ejecutar_pregunta3(tabla: list[dict]):
     st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
 
     dic= pregunta_3(tabla,2025)
-    x=dic["ciudades"]
-    y=dic["promedios"]
+    x=dic["Ciudades"]
+    y=dic["Promedios"]
     bar_colors = ['#FF3434', '#FF8059', '#FF9756','#F5AD6A','#FFEB7C']
 
     fig, ax = plt.subplots()
     ax.bar(x, y, color=bar_colors)
 
     ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
-    ax.set_xlabel("ciudades")
-    ax.set_ylabel("promedios")
+    ax.set_xlabel("Ciudades")
+    ax.set_ylabel("Promedios")
 
     st.pyplot(fig)
 
@@ -442,7 +441,7 @@ def confirmar_datos(tabla,lat_sup:float,lat_inf:float,long_inf:float,long_sup:fl
     lista para ser renderizada en la página.
     '''
     if coordenadas_validas(lat_sup,lat_inf,long_sup,long_inf):
-        st.table(mayores_promedios(filtrar_por_ubicacion(tabla,lat_sup,lat_inf,long_inf,long_sup)))
+        st.table(mayores_valores(filtrar_por_ubicacion(tabla,lat_sup,lat_inf,long_inf,long_sup),"Eventos Peligrosos"))
     else:
         st.write("Valores inválidos.")
         
@@ -452,7 +451,7 @@ def ejecutar_pregunta4(tabla):
     """
     Funcion encargada de el ingreso de datos del usuario y la renderización de los componentes de la pregunta 4.
     """
-    st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con catástrofes naturales en 2025?")
+    st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con eventos peligrosos en 2025?")
     st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superior y la longitud inferior sea menor a la longitud superior.")
     latitud_inferior = st.slider("Latitud Inferior", -90, 90)
     latitud_superior = st.slider("Latitud Superior", -90, 90)
