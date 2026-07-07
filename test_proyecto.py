@@ -57,6 +57,7 @@ def test_procesar_archivo():
 
 def test_promedio():
     assert promedio({'Paris': [10, 156.8], 'Tokyo':[4,16.4],'Beijing':[5,8.0], 'Seoul':[2,45.8] }) == {'Paris': 15.680000000000001, 'Tokyo':4.1,'Beijing':1.6, 'Seoul':22.9 }
+    assert promedio({'Buenos Aires': [1, 200.8], 'Mumbai':[7,234.8],'New York':[3,128.9], 'Seoul':[8,460.8] }) == {'Buenos Aires': 200.8, 'Mumbai': 33.542857142857144, 'New York': 42.96666666666667, 'Seoul': 57.6}
 
 def test_ordenar_primeros_5():
     assert ordenar_primeros_5({'Ciudades': ['Tokyo', 'Beijing', 'Mumbai', 'Mexico City', 'Moscow'], 'promedios': [1.0, 14.0, 41.0, 1.0, 0.0]},"promedios") == {'Ciudades': [  'Mumbai','Beijing', 'Tokyo','Mexico City', 'Moscow'], 'promedios': [ 41.0, 14.0,1.0, 1.0, 0.0]}
@@ -159,8 +160,7 @@ def test_filtrar_ubicacionesXmes():
      'UV_Index': 6.4, 'European_AQI': 64, 'Hazardous_Event': 0}],"Febrero 2026") ==\
     [{'Latitude': 19.4326, 'Longitude': -99.1332, 'Color': '#C300FFC6'}, {'Latitude': 35.6895, 'Longitude': 139.6917, 'Color': '#0DFF00C8'}]
 
-    assert filtrar_ubicacionesXmes(tabla_de_prueba,
-     "Diciembre 2025") ==\
+    assert filtrar_ubicacionesXmes(tabla_de_prueba,"Diciembre 2025") ==\
     [{'Latitude': 28.6139, 'Longitude': 77.209, 'Color': '#0DFF00C8'}, {'Latitude': 39.9042, 'Longitude': 116.4074, 'Color': '#0DFF00C8'}]
 
 def test_ciudad_america():
