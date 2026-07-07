@@ -30,13 +30,13 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 
-def fechaAtupla(fecha: str) -> tuple:
+def fechaAtupla(fecha: str) -> tuple[int,int,int,int]:
     '''
-    str -> tuple[int,int,int,int]
-    
     Dada una fecha como string, devuelve la misma fecha pasada a tupla.
 
     fechaAtupla("2025-10-02T06:00") == (2025,10,2,6)
+    fechaAtupla("2025-09-30T23:00") == (2025,9,30,23)
+    fechaAtupla("2026-02-08T01:00") == (2026,2,8,1)
     '''
     anio = int(fecha[0:4])
     mes = int(fecha[5:7])
@@ -87,8 +87,6 @@ def crear_fila(atributos: list[str], valores: list[str]) -> dict:
 
 def procesar_archivo(nombre_archivo: str) -> list[dict]:
     '''
-    nombre_archivo: string
-
     archivo -> tabla
 
     Recibe el nombre del archivo y produce una tabla.
@@ -109,15 +107,19 @@ def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
     '''
     Representamos a las "Ciudades filtradas" como diccionarios 
     de la forma {ciudad: [cantidad de veces encontrada, suma de indices de polvo/indice uv]}. 
-    donde la cantidad de veces que se encontro en la tabla es un int > 0 y la suma
-    de los indices es un float >= 0.
+    donde la cantidad de veces que se encontro en la tabla es un int > 0 y la suma de los indices es un float >= 0.
 
-    representamos los promedios de el valor a calcular de las ciudades (ciudades_promedios) como diccionarios de la forma
+    representamos los promedios del valor a calcular de las ciudades (ciudades_promedios) como diccionarios de la forma
     {ciudad: promedio_indice}. donde promedio_indice es un float >= 0
 
     ciudades_filtradas -> ciudades_promedios
 
     Dado un diccionario con las ciudades filtradas, devuelve un diccionario con las ciudades y sus promedios de polvo/indice uv.
+
+    promedio({'Paris': [10, 156.8], 'Tokyo':[4,16.4],'Beijing':[5,8.0], 'Seoul':[2,45.8] }) == 
+    {'Paris': 15.680000000000001, 'Tokyo':4.1,'Beijing':1.6, 'Seoul':22.9 }
+    promedio({'Buenos Aires': [1, 200.8], 'Mumbai':[7,234.8],'New York':[3,128.9], 'Seoul':[8,460.8] }) == 
+    {'Buenos Aires': 200.8, 'Mumbai': 33.542857142857144, 'New York': 42.96666666666667, 'Seoul': 57.6}
     '''
     for ciudad in ciudades_filtradas:
         cant_encuentros = ciudades_filtradas[ciudad][0]
@@ -132,6 +134,11 @@ def ordenar_primeros_5(dic:dict[str:list],atributo:str) -> dict[str:list]:
     Funcion auxiliar para ordenar las primeros 5 ciudades de la funcion mayores_promedios
     Recibe un dic["ciudades":List[String], "promedios":List[Number]
     y produce el mismo tipo pero ordena simultaneamente ambas listas del diccionario
+
+    ordenar_primeros_5({'Ciudades': ['Tokyo', 'Beijing', 'Mumbai', 'Mexico City', 'Moscow'], 'promedios': [1.0, 14.0, 41.0, 1.0, 0.0]},
+    "promedios") == {'Ciudades': [  'Mumbai','Beijing', 'Tokyo','Mexico City', 'Moscow'], 'promedios': [ 41.0, 14.0,1.0, 1.0, 0.0]}
+    ordenar_primeros_5({'Ciudades': ['Tokyo', 'Beijing', 'Mumbai', 'Mexico City', 'Moscow'], 'promedios': [40.0, 22.0, 32.0, 99.0, 36.0]},
+    "promedios") == {'Ciudades': [  'Mexico City','Tokyo', 'Moscow','Mumbai', 'Beijing'], 'promedios': [ 99.0, 40.0,36.0, 32.0, 22.0]}
     """
     dic_aux={"Ciudades":[dic["Ciudades"][0]], atributo:[dic[atributo][0]]} # pone los primeros elementos en el nuevo diccionario
     dic["Ciudades"].pop(0) # los saca del diccionario viejo
@@ -152,11 +159,15 @@ def ordenar_primeros_5(dic:dict[str:list],atributo:str) -> dict[str:list]:
 
 def mayores_valores(ciudades_valores: dict[str:float], atributo:str) -> dict[str:list]:
     '''
-    Toma un diccionario de la forma {"ciudad":valor} donde el valor puede ser de  distintas índoles
-    tales como promedios, suma de eventos peligrosos, etc.
-    Y toma un string representando el nombre de la columna de la tabla para la visualización
-    produce un diccionario de la forma {"ciudad":lista de ciudades, "atributo":lista de valores}
+    Toma un diccionario de la forma {"ciudad":valor} donde el valor puede ser de distintas índoles
+    tales como promedios, suma de eventos peligrosos, etc. Y toma un string representando el nombre de la columna de la tabla.
+    Produce un diccionario de la forma {"ciudad":lista de ciudades, "atributo":lista de valores}
     en donde los indices de cada lista se corresponden y los cuales son los 5 mayores valores
+
+    mayores_valores({'Paris':30.1,'Tokyo':10.4,'Seoul':5.20,'Beijing':4.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0},"promedios") ==
+     {'Ciudades':['Paris','Mumbai','Tokyo','Bangkok','Seoul'],'promedios':[30.1,10.6,10.4,8.0,5.20]}
+    mayores_valores({'Paris':0.1,'Tokyo':0.4,'Seoul':5.20,'Beijing':6.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0},"promedios") ==
+     {'Ciudades':['Mumbai','Bangkok','Beijing','Seoul','Tokyo'],'promedios':[10.6,8.0,6.3,5.20,0.4]}
     '''
     nuevo_dic = {"Ciudades":[], atributo:[]}
     cuenta = 0
@@ -240,15 +251,13 @@ def filtrar_por_anio_y_suma(tabla: list[dict],anio:int,atributo:str)->dict[str:l
 
 def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     '''
-    representaremos los "mayores promedios" de las ciudades como
-    dicccionarios de la forma {"ciudades": [nombres_ciudades], "Promedio": [promedios_polvo]}. 
-    Donde las "nombres_ciudades" son strings y "promedios_polvo" son int. Ambas listas 
-    son de 5 elementos
+    representaremos los "mayores promedios" de las ciudades como dicccionarios de la forma 
+    {"ciudades": [nombres_ciudades], "Promedio": [promedios_polvo]}. 
+    Donde las "nombres_ciudades" son strings y "promedios_polvo" son int. Ambas listas son de 5 elementos
 
     tabla int -> mayores promedios
     
-    Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades con mayor promedio
-    de indice de polvo.
+    Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades con mayor promedio de indice de polvo.
     '''
     ciudades_promedios = mayores_valores(promedio(filtrar_por_anio_y_suma(tabla,anio,"Dust_ug_m3")), "Promedios")
             
@@ -261,6 +270,10 @@ def fecha_str(fecha: tuple) -> str:
 
     Dada una "fecha" de la tabla, devuelve el string con 
     el nombre del mes y año.
+
+    fecha_str((2025, 1, 10, 9)) == "Enero 2025"
+    fecha_str((2025, 8, 2, 15)) == "Agosto 2025"
+    fecha_str((2026, 5, 27, 18)) == "Mayo 2026"
     '''
     meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
              "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
@@ -275,8 +288,7 @@ def elegir_color(prom_UV: float) -> str:
     '''
     prom_UV -> Color
 
-    Dado el "promedio de UV", devuelve el "color" como str en su
-    forma Hexadesimal, según la siguiente forma:
+    Dado el "promedio de UV", devuelve el "color" como str en su forma Hexadesimal, según la siguiente forma:
 
     Verde: 0 <= prom_UV < 1
     Amarillo: 1 <= prom_UV < 2
@@ -284,8 +296,11 @@ def elegir_color(prom_UV: float) -> str:
     Rojo: 3 <= prom-UV < 4
     Violeta: 4 <= prom_UV
 
-    (La escala de los colores no es la que se suele usar en general, se 
-    modificó para que sea más visual el cambio de colores).
+    (La escala de los colores no es la que se suele usar en general, se modificó para que sea más visual el cambio de colores).
+
+    elegir_color(15.0) == "#C300FFC6"
+    elegir_color(1.65) == "#FFFF00C8"
+    elegir_color(0.0) == "#0DFF00C8"
     '''
     color = ""
     if prom_UV < 1:
@@ -304,9 +319,7 @@ def elegir_color(prom_UV: float) -> str:
 
 def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
     '''
-    Tabla Fecha("Mes año") -> dict[str:tuple]
-
-    dada una tabla y una fecha dada como string de la forma "mes año, filtra ciudades segun el año y mes pasados 
+    dada una tabla y una fecha dada como string de la forma "mes año", filtra ciudades segun el año y mes pasados 
     y devuelve un diccionario de la forma: {ciudad:(latitud,longitud,promedio_indice_uv)}.
     Es decir cada ciudad queda asociada a sus coordenadas y al promedio de indice uv durante el mes del año indicado
     '''
@@ -341,8 +354,6 @@ def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
 
 def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     '''
-    Tabla fecha("Mes año") -> list[dict]
-
     Dada una "tabla" y una fecha en la forma "mes año", devuelve ubicaciones,
     una lista de diccionarios de la forma [{"Latitude": float, "Longitude": float, "Color": str}].
     En donde, "Latitude" y "Longitude" son los valores correspondientes a los mismos de la tabla y el "Color" está 
@@ -362,7 +373,10 @@ def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
 
 
 def ciudad_america(ciudad:str)->bool:
-    '''dada una ciudad devuelve True si es de America'''
+    '''dada una ciudad devuelve True si es de America
+
+    ciudad_america('Mexico City') == True
+    ciudad_america('Tokyo') == False'''
     lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
     return ciudad in lista_ciudades_america
 
@@ -440,7 +454,10 @@ def ejecutar_pregunta2(tabla: list[dict]):
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
 def lat_long_validas(lat_sup:int,lat_inf:int,long_inf:int,long_sup:int, lat_ingresada:int, long_ingresada:int)-> bool:
-    '''verifica si las coordenadas geogeraficas ingresadas por el usuario son correctas'''
+    '''verifica si las coordenadas geogeraficas ingresadas por el usuario son correctas
+    
+    lat_long_validas(100,0,0,100,-5,500) == False
+    lat_long_validas(100,0,0,100,50,20) == True'''
     return ((lat_inf < lat_ingresada) and (lat_sup > lat_ingresada) and (long_inf < long_ingresada) and (long_sup > long_ingresada))
 
 def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
@@ -460,11 +477,13 @@ def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:in
 
 def coordenadas_validas(lat_sup:float,lat_inf:float,long_sup:float,long_inf:float)->bool:
     '''
-    Interpretamos las coordenadas de latitud (entre -90 y 90) 
-    o longitud(entre -180 y 180) como floats.
-    recibe coordenadas que representa la latitud superior, inferior, la longitud
-    superior e inferior. Produce un booleano en funcion si la longitud inferior es menor
-    a la latitud superior y de igual manera con las longitudes.
+    Interpretamos las coordenadas de latitud (entre -90 y 90) o longitud(entre -180 y 180) como floats.
+    Recibe coordenadas que representa la latitud superior, inferior, la longitud superior e inferior. 
+    Produce un booleano en funcion si la longitud inferior es menor a la latitud superior y de igual manera con las longitudes.
+
+    coordenadas_validas(12.2,7,-55,13) == False
+    coordenadas_validas(55,-1.3,125,120) == True
+    coordenadas_validas(0,0,0,0) == False
     '''
     return lat_inf<lat_sup and long_inf<long_sup
 
