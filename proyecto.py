@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------------------------------------
 # Trabajo Practico Grupal: Calidad del aire en distintas ciudades del mundo y niveles de polución.
-# Catedra Programación II, 2C.
+# Catedra Programación II, 1C.
 # Grupo 4
 # Integrantes: Borraccini, Renzo.
 #              Ruelli Cubertié, Jazmín.
@@ -183,10 +183,33 @@ def mayores_valores(ciudades_valores: dict[str:float], atributo:str) -> dict[str
     return nuevo_dic
 
 
-def contar_apariciones_y_sumar_elementos(fila: dict, atributo: str, dict_list: dict[list], clave: str, condicion: bool) -> dict[list]:
+def contar_apariciones_y_sumar_elementos(fila: dict, atributo: str, dict_list: dict[list[int,float]], clave: str, condicion: bool) -> dict[list]:
     '''
-    Dada una tabla, un atributo de la misma, un diccionario de listas, una clave y una condición, en base a la condición, determina 
-    si una clave pertenece al diccionario de listas, si es así, 
+    "dict_list" es un diccionario de listas donde el primer elemento es la cantidad de apariciones de un valor de una fila y el segundo
+    es la suma de los elementos encontrados de la fila.
+
+    Dada una tabla, un atributo de la misma, un diccionario de listas, una clave y una condición, en base a la condición, si esta es verdadera,
+    modifica al diccionario de listas dado, si no, devuelve al mismo sin ningún cambio.
+    La modificación del diccionario va a ser, la inclusión de la clave dada con la lista, formada por el incio de conteo de apariciones del elemento de 
+    la fila (en este caso el número 1) y el mismo elemento. Si en cambio, está clave está en el diccionario, se suma 1 al contador de apariciones
+    y se suma el elemento encontrado a la suma de los elementos.
+
+    contar_apariciones_y_sumar_elementos(
+                                        {'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
+                                        'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},
+                                        "Dust_ug_m3",
+                                        {},
+                                        "Delhi",
+                                        True
+                                        ) = {"Delhi": [1,176.0]}
+    contar_apariciones_y_sumar_elementos(
+                                        {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 'PM2_5_ug_m3': 154.6, 
+                                        'Carbon_Monoxide_ug_m3': 1388.0, 'Nitrogen_Dioxide_ug_m3': 35.9, 'Ozone_ug_m3': 11.0, 'Dust_ug_m3': 14.0, 'UV_Index': 0.45, 'European_AQI': 177, 'Hazardous_Event': 1},
+                                        "Dust_ug_m3",
+                                        {"Delhi": [1,176.0]},
+                                        "Beijing",
+                                        False 
+                                        ) = {"Delhi": [1,176.0]}
     '''
     atributo_individual = fila[atributo]
     if condicion:
