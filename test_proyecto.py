@@ -1,5 +1,7 @@
 from proyecto import *
 
+tabla_completa=procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
+
 tabla_de_prueba = [{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
      'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1}, 
     {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 'PM2_5_ug_m3': 154.6, 
@@ -279,6 +281,15 @@ def test_filtrar_promedio_ciudades_por_fecha():
      'Carbon_Monoxide_ug_m3': 289.0, 'Nitrogen_Dioxide_ug_m3': 38.7, 'Ozone_ug_m3': 14.0, 'Dust_ug_m3': 0.0, 'UV_Index': 0.0, 'European_AQI': 63, 'Hazardous_Event': 0}],
     "Carbon_Monoxide_ug_m3", "Diciembre 2025") == {"Delhi": 635.0, "Beijing": 1388.0}
 
+def test_aux():
+    assert aux(filtrar_promedio_ciudades_por_fecha(tabla_completa,"PM10_ug_m3","Enero 2026"),'PM10_ug_m3',{})=={'Sao Paulo': [15.897297297297298], 'Mumbai': [61.11515151515152], 'Tehran': [63.86153846153846], 'Mexico City': [34.34791666666667], 
+    'Bogota': [19.174193548387095], 'Dhaka': [98.95], 'Riyadh': [1758.6142857142854], 'Karachi': [49.90625000000001], 'Delhi': [120.66511627906974], 
+    'Tokyo': [34.94642857142857], 'Johannesburg': [24.250000000000004], 'Buenos Aires': [8.3], 'Istanbul': [53.71794871794871], 
+    'Jakarta': [51.46451612903226], 'Moscow': [84.3051282051282], 'Cairo': [91.87333333333332], 'Lahore': [137.5225806451613],
+     'Lagos': [56.17948717948719], 'Dubai': [70.13666666666667], 'New York': [11.392592592592589], 'Lima': [35.12972972972973], 
+     'Shanghai': [67.58181818181819], 'Paris': [22.856521739130432], 'Bangkok': [35.21470588235293], 'London': [13.811363636363636],
+      'Beijing': [129.01935483870966], 'Los Angeles': [21.638888888888886], 'Seoul': [32.847368421052636], 'Chicago': [11.389999999999997]}
+      
 def test_promedios_componentes_de_ciudades():
     assert promedios_componentes_de_ciudades([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
      'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1}, 
@@ -314,7 +325,7 @@ def test_filtrar_por_ubicacion():
     assert filtrar_por_ubicacion(tabla_de_prueba,21,19,71,73) == {'Mumbai': 0}
 
 
-tabla_completa=procesar_archivo("global_urban_smog_pm25_hourly_12k.csv")
+
 
 def test_promedios_monoxido_por_mes():
     assert promedios_monoxido_por_mes('Mexico City',tabla_completa) ==\

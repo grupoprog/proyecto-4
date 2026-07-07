@@ -515,11 +515,9 @@ def filtrar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha:
     return promedio_ciudades
 
 def aux(dic_ciudad_prom: dict, componente:str,dic: dict)-> dict[str:list[float]]:
-    '''toma un diccionario de la forma {'ciudad':promedio de atributo dado} y componente
-    y para cada ciudad en el diccionario recibido como argumento, va agregando un elemento a la lista (el promedio del componente dado)
-    por ejemplo, al filtrar el promedio de "PM10_ug_m3" en  "Diciembre 2025" de una tabla dada, tenemos que 
-    dic_ciudad_prom={"Delhi": 129.5, "Beijing": 164.4}
-    aux({"Delhi": 129.5, "Beijing": 164.4},"PM10_ug_m3")=={"Delhi":[129.5], "Beijing":[164.4]} '''
+    '''dic_ciudad_prom es un diccionario de la forma {'ciudad':promedio de atributo dado}, componente es el atributo  y 
+    dic es el diccionario que se va actualizando con cada promedio de componente pedido previamente en promedios_componentes_de_ciudades, 
+    va agregando un elemento a la lista (el promedio del componente dado)'''
     for ciudad in dic_ciudad_prom:
         promedio = dic_ciudad_prom[ciudad]
 
