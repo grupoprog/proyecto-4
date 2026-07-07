@@ -411,6 +411,9 @@ def ejecutar_pregunta2(tabla: list[dict]):
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
+def lat_long_validas(lat_sup:int,lat_inf:int,long_inf:int,long_sup:int, lat_ingresada:int, long_ingresada:int)-> bool:
+    '''verifica si las coordenadas geogeraficas ingresadas por el usuario son correctas'''
+    return ((lat_inf < lat_ingresada) and (lat_sup > lat_ingresada) and (long_inf < long_ingresada) and (long_sup > long_ingresada))
 
 def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
     '''
@@ -419,7 +422,7 @@ def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:in
     '''
     tabla_filtrada={}
     for entrada in tabla:
-        if lat_inf < entrada["Latitude"] and lat_sup > entrada["Latitude"] and long_inf < entrada["Longitude"] and long_sup > entrada["Longitude"]: #verifica si las coordenadas son correctas
+        if lat_long_validas(lat_sup,lat_inf,long_inf,long_sup, entrada["Latitude"], entrada["Longitude"]):
             if entrada["City"] in tabla_filtrada:
                 tabla_filtrada[entrada["City"]]+=entrada["Hazardous_Event"]
             else:
@@ -488,7 +491,7 @@ def listar_por_atributo(tabla: list[dict], atributo: str) -> list:
     return lista
 
 
-def filtar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha: str) -> dict[str: float]:
+def filtrar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha: str) -> dict[str: float]:
     '''
     tabla atributo fecha("mes año") -> {ciudad: promedio}
 
@@ -513,8 +516,23 @@ def filtar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha: 
 
     return promedio_ciudades
 
+def aux(dic_ciudad_prom: dict, componente:str,dic: dict)-> dict[str:list[float]]:
+    '''toma un diccionario de la forma {'ciudad':promedio de atributo dado} y componente
+    y para cada ciudad en el diccionario recibido como argumento, va agregando un elemento a la lista (el promedio del componente dado)
+    por ejemplo, al filtrar el promedio de "PM10_ug_m3" en  "Diciembre 2025" de una tabla dada, tenemos que 
+    dic_ciudad_prom={"Delhi": 129.5, "Beijing": 164.4}
+    aux({"Delhi": 129.5, "Beijing": 164.4},"PM10_ug_m3")=={"Delhi":[129.5], "Beijing":[164.4]} '''
+    for ciudad in dic_ciudad_prom:
+        promedio = dic_ciudad_prom[ciudad]
 
-def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[list[float]]:
+        if ciudad in dic:
+            dic[ciudad].append(promedio)
+        else:
+            dic[ciudad] = [promedio]
+
+    return dic
+
+def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[str:list[float]]:
     '''
     tabla fecha -> {ciudad: [promedios]}
 
@@ -523,20 +541,13 @@ def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[lis
     las componentes del aire correspondientes a la misma en la fecha dada.
     '''
     dic = {}
-    componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3",
-                   "Ozone_ug_m3", "Dust_ug_m3"]
+    
+    componentes = ["PM10_ug_m3", "PM2_5_ug_m3", "Carbon_Monoxide_ug_m3", "Nitrogen_Dioxide_ug_m3","Ozone_ug_m3", "Dust_ug_m3"]
     
     for componente in componentes:
-        promedios_componente = filtar_promedio_ciudades_por_fecha(tabla,componente,fecha)
-
-        for ciudad in promedios_componente:
-            promedio = promedios_componente[ciudad]
-
-            if ciudad in dic:
-                dic[ciudad].append(promedio)
-            else:
-                dic[ciudad] = [promedio]
-    
+        promedios_componente = filtrar_promedio_ciudades_por_fecha(tabla,componente,fecha)
+        dic=aux(promedios_componente,componente,dic)
+        
     return dic
 
 

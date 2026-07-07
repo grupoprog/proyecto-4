@@ -244,8 +244,8 @@ def test_listar_por_atributo():
      'PM2_5_ug_m3': 7.5, 'Carbon_Monoxide_ug_m3': 306.0, 'Nitrogen_Dioxide_ug_m3': 9.0, 'Ozone_ug_m3': 154.0, 'Dust_ug_m3': 0.0, 
      'UV_Index': 6.4, 'European_AQI': 64, 'Hazardous_Event': 0}], "City") == ["Mexico City", "Tokyo"]
     
-def test_filtar_promedio_ciudades_por_fecha():
-    assert filtar_promedio_ciudades_por_fecha([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
+def test_filtrar_promedio_ciudades_por_fecha():
+    assert filtrar_promedio_ciudades_por_fecha([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
      'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1}, 
     {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 'PM2_5_ug_m3': 154.6, 
      'Carbon_Monoxide_ug_m3': 1388.0, 'Nitrogen_Dioxide_ug_m3': 35.9, 'Ozone_ug_m3': 11.0, 'Dust_ug_m3': 14.0, 'UV_Index': 0.45, 'European_AQI': 177, 'Hazardous_Event': 1}, 
@@ -256,7 +256,7 @@ def test_filtar_promedio_ciudades_por_fecha():
     {'Timestamp': (2025, 9, 16, 6), 'City': 'Moscow', 'Latitude': 55.7558, 'Longitude': 37.6173, 'PM10_ug_m3': 47.1, 'PM2_5_ug_m3': 38.7, 
      'Carbon_Monoxide_ug_m3': 289.0, 'Nitrogen_Dioxide_ug_m3': 38.7, 'Ozone_ug_m3': 14.0, 'Dust_ug_m3': 0.0, 'UV_Index': 0.0, 'European_AQI': 63, 'Hazardous_Event': 0}],
     "PM10_ug_m3", "Diciembre 2025") == {"Delhi": 129.5, "Beijing": 164.4}
-    assert filtar_promedio_ciudades_por_fecha([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
+    assert filtrar_promedio_ciudades_por_fecha([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
      'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1}, 
     {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 'PM2_5_ug_m3': 154.6, 
      'Carbon_Monoxide_ug_m3': 1388.0, 'Nitrogen_Dioxide_ug_m3': 35.9, 'Ozone_ug_m3': 11.0, 'Dust_ug_m3': 14.0, 'UV_Index': 0.45, 'European_AQI': 177, 'Hazardous_Event': 1}, 
@@ -267,7 +267,7 @@ def test_filtar_promedio_ciudades_por_fecha():
     {'Timestamp': (2025, 9, 16, 6), 'City': 'Moscow', 'Latitude': 55.7558, 'Longitude': 37.6173, 'PM10_ug_m3': 47.1, 'PM2_5_ug_m3': 38.7, 
      'Carbon_Monoxide_ug_m3': 289.0, 'Nitrogen_Dioxide_ug_m3': 38.7, 'Ozone_ug_m3': 14.0, 'Dust_ug_m3': 0.0, 'UV_Index': 0.0, 'European_AQI': 63, 'Hazardous_Event': 0}],
     "PM10_ug_m3", "Diciembre 2025") == {"Delhi": 91.35, "Beijing": 164.4, "Mexico City": 35.2}
-    assert filtar_promedio_ciudades_por_fecha([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
+    assert filtrar_promedio_ciudades_por_fecha([{'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
      'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1}, 
     {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 'PM2_5_ug_m3': 154.6, 
      'Carbon_Monoxide_ug_m3': 1388.0, 'Nitrogen_Dioxide_ug_m3': 35.9, 'Ozone_ug_m3': 11.0, 'Dust_ug_m3': 14.0, 'UV_Index': 0.45, 'European_AQI': 177, 'Hazardous_Event': 1}, 
@@ -302,6 +302,11 @@ def test_promedios_componentes_de_ciudades():
     {'Timestamp': (2025, 9, 16, 6), 'City': 'Moscow', 'Latitude': 55.7558, 'Longitude': 37.6173, 'PM10_ug_m3': 47.1, 'PM2_5_ug_m3': 38.7, 
      'Carbon_Monoxide_ug_m3': 289.0, 'Nitrogen_Dioxide_ug_m3': 38.7, 'Ozone_ug_m3': 14.0, 'Dust_ug_m3': 0.0, 'UV_Index': 0.0, 'European_AQI': 63, 'Hazardous_Event': 0}],
      "Diciembre 2025") == {"Delhi":[91.35,31.7,402.5,10.55,95.0,108.5], "Beijing":[164.4,154.6,1388.0,35.9,11.0,14.0], "Mexico City":[35.2,34.8,546.0,68.6,37.0,1.0]}
+
+
+def test_lat_long_validas():
+    assert lat_long_validas(100,0,0,100,-5,500) == False
+    assert lat_long_validas(100,0,0,100,50,20) == True
 
 def test_filtrar_por_ubicacion():
     assert filtrar_por_ubicacion(tabla_de_prueba,90,-90,-180,180) == {'Delhi': 1, 'Beijing': 1, 'Mumbai': 0, 'Mexico City': 0, 'Moscow': 0}
