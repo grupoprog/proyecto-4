@@ -409,6 +409,9 @@ def ejecutar_pregunta2(tabla: list[dict]):
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
+def lat_long_validas(lat_sup:int,lat_inf:int,long_inf:int,long_sup:int, lat_ingresada:int, long_ingresada:int)-> bool:
+    '''verifica si las coordenadas geogeraficas ingresadas por el usuario son correctas'''
+    return ((lat_inf < lat_ingresada) and (lat_sup > lat_ingresada) and (long_inf < long_ingresada) and (long_sup > long_ingresada))
 
 def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
     '''
@@ -417,7 +420,7 @@ def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:in
     '''
     tabla_filtrada={}
     for entrada in tabla:
-        if lat_inf < entrada["Latitude"] and lat_sup > entrada["Latitude"] and long_inf < entrada["Longitude"] and long_sup > entrada["Longitude"]: #verifica si las coordenadas son correctas
+        if lat_long_validas(lat_sup,lat_inf,long_inf,long_sup, entrada["Latitude"], entrada["Longitude"]):
             if entrada["City"] in tabla_filtrada:
                 tabla_filtrada[entrada["City"]]+=entrada["Hazardous_Event"]
             else:

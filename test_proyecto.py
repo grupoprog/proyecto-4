@@ -303,6 +303,11 @@ def test_promedios_componentes_de_ciudades():
      'Carbon_Monoxide_ug_m3': 289.0, 'Nitrogen_Dioxide_ug_m3': 38.7, 'Ozone_ug_m3': 14.0, 'Dust_ug_m3': 0.0, 'UV_Index': 0.0, 'European_AQI': 63, 'Hazardous_Event': 0}],
      "Diciembre 2025") == {"Delhi":[91.35,31.7,402.5,10.55,95.0,108.5], "Beijing":[164.4,154.6,1388.0,35.9,11.0,14.0], "Mexico City":[35.2,34.8,546.0,68.6,37.0,1.0]}
 
+
+def test_lat_long_validas():
+    assert lat_long_validas(100,0,0,100,-5,500) == False
+    assert lat_long_validas(100,0,0,100,50,20) == True
+
 def test_filtrar_por_ubicacion():
     assert filtrar_por_ubicacion(tabla_de_prueba,90,-90,-180,180) == {'Delhi': 1, 'Beijing': 1, 'Mumbai': 0, 'Mexico City': 0, 'Moscow': 0}
     assert filtrar_por_ubicacion(tabla_de_prueba,-80,-90,170,180) == {}
