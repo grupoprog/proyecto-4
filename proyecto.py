@@ -521,8 +521,8 @@ def filtrar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha:
 
     return promedio_ciudades
 
-def aux(dic_ciudad_prom: dict, componente:str,dic: dict)-> dict[str:list[float]]:
-    '''dic_ciudad_prom es un diccionario de la forma {'ciudad':promedio de atributo dado}, componente es el atributo  y 
+def aux(dic_ciudad_prom: dict,dic: dict)-> dict[str:list[float]]:
+    '''dic_ciudad_prom es un diccionario de la forma {'ciudad':promedio de atributo dado} y 
     dic es el diccionario que se va actualizando con cada promedio de componente pedido previamente en promedios_componentes_de_ciudades, 
     va agregando un elemento a la lista (el promedio del componente dado)'''
     for ciudad in dic_ciudad_prom:
@@ -549,7 +549,7 @@ def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[str
     
     for componente in componentes:
         promedios_componente = filtrar_promedio_ciudades_por_fecha(tabla,componente,fecha)
-        dic=aux(promedios_componente,componente,dic)
+        dic=aux(promedios_componente,dic)
         
     return dic
 
