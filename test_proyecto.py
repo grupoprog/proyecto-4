@@ -66,6 +66,19 @@ def test_mayores_valores():
     assert mayores_valores({'Paris':30.1,'Tokyo':10.4,'Seoul':5.20,'Beijing':4.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0},"promedios") == {'Ciudades':['Paris','Mumbai','Tokyo','Bangkok','Seoul'],'promedios':[30.1,10.6,10.4,8.0,5.20]}
     assert mayores_valores({'Paris':0.1,'Tokyo':0.4,'Seoul':5.20,'Beijing':6.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0},"promedios") == {'Ciudades':['Mumbai','Bangkok','Beijing','Seoul','Tokyo'],'promedios':[10.6,8.0,6.3,5.20,0.4]}
 
+def test_contar_apariciones_y_sumar_elementos():
+    assert contar_apariciones_y_sumar_elementos({'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 
+    'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9,'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 
+    'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},'PM10_ug_m3',{},
+    'Delhi',2025==2025) == {'Delhi': [1, 129.5]}
+    assert contar_apariciones_y_sumar_elementos({'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 
+    'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9,'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5,
+     'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},'PM10_ug_m3',
+     {'Bogota': [2,19.17], 'Dhaka': [1,98.95], 'Riyadh': [3,1758.61],'Delhi':[6,2894.57]},'Delhi',2025==2025) \== 
+    {'Bogota': [2, 19.17], 'Dhaka': [1, 98.95], 'Riyadh': [3, 1758.61], 'Delhi': [7, 3024.07]}
+
+
+
 def test_filtrar_por_anio_y_suma():
     assert filtrar_por_anio_y_suma([{'Timestamp': (2026, 2, 15, 13), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 'PM10_ug_m3': 25.3, 'PM2_5_ug_m3': 25.0,
        'Carbon_Monoxide_ug_m3': 271.0, 'Nitrogen_Dioxide_ug_m3': 4.5, 'Ozone_ug_m3': 184.0, 'Dust_ug_m3': 0.0, 'UV_Index': 9.25, 'European_AQI': 70, 'Hazardous_Event': 0}, 
