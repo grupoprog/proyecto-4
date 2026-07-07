@@ -1,4 +1,4 @@
-#POk por por# -------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------
 # Trabajo Practico Grupal: Calidad del aire en distintas ciudades del mundo y niveles de polución.
 # Catedra Programación II, 2C.
 # Grupo 4
@@ -163,7 +163,6 @@ def mayores_valores(ciudades_valores: dict[str:float], atributo:str) -> dict[str
     flag_ordenado = False
     for ciudad in ciudades_valores:
         flag = False
-        cant_ciudades = len(nuevo_dic["Ciudades"])
 
         if cuenta < 5 :
             nuevo_dic["Ciudades"].append(ciudad)
@@ -184,6 +183,22 @@ def mayores_valores(ciudades_valores: dict[str:float], atributo:str) -> dict[str
     return nuevo_dic
 
 
+def contar_apariciones_y_sumar_elementos(fila: dict, atributo: str, dict_list: dict[list], clave: str, condicion: bool) -> dict[list]:
+    '''
+    Dada una tabla, un atributo de la misma, un diccionario de listas, una clave y una condición, en base a la condición, determina 
+    si una clave pertenece al diccionario de listas, si es así, 
+    '''
+    atributo_individual = fila[atributo]
+    if condicion:
+        if clave in dict_list:
+            dict_list[clave][0] += 1
+            dict_list[clave][1] += atributo_individual
+        else:
+            dict_list[clave] = [1, atributo_individual]
+    
+    return dict_list
+
+
 def filtrar_por_anio_y_suma(tabla: list[dict],anio:int,atributo:str)->dict[str:list[int,float]]:
     """
     Recibe una tabla, un año y un atributo y produce un diccionario de la forma {ciudad:[numero_de_entradas,suma_de_valores]}
@@ -193,15 +208,10 @@ def filtrar_por_anio_y_suma(tabla: list[dict],anio:int,atributo:str)->dict[str:l
     for fila in tabla:
         anio_fecha = fila["Timestamp"][0]
         ciudad = fila["City"]
-        atributo_individual = fila[atributo]
+        condicion = anio_fecha == anio
 
-        if anio_fecha == anio:
-            if ciudad in ciudades_filtradas:
-                ciudades_filtradas[ciudad][0] += 1
-                ciudades_filtradas[ciudad][1] += atributo_individual
-            else:
-                ciudades_filtradas[ciudad] = [1,atributo_individual]
-
+        ciudades_filtradas = contar_apariciones_y_sumar_elementos(fila, atributo, ciudades_filtradas, ciudad, condicion)
+        
     return ciudades_filtradas
 
 
@@ -283,17 +293,12 @@ def filtrar_ciudades(tabla: list[dict], fecha: str)-> dict[str: tuple]:
     for fila in tabla:
         fecha_fila = fecha_str(fila["Timestamp"])
         ciudad = fila["City"]
-        ind_uv = fila['UV_Index']
+        condicion = fecha == fecha_fila
+
+        ciudades_filtradas = contar_apariciones_y_sumar_elementos(fila, 'UV_Index', ciudades_filtradas, ciudad, condicion)
+        
         latitud = fila["Latitude"]
         longitud = fila["Longitude"]
-
-        if fecha == fecha_fila:
-
-            if ciudad in ciudades_filtradas:
-                ciudades_filtradas[ciudad][0] += 1
-                ciudades_filtradas[ciudad][1] += ind_uv
-            else:
-                ciudades_filtradas[ciudad] = [1,ind_uv]
         
         if ciudad not in ubicaciones:
             ubicaciones[ciudad] = (latitud,longitud)
