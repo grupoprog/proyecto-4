@@ -60,9 +60,9 @@ def test_ordenar_primeros_5():
     assert ordenar_primeros_5({'ciudades': ['Tokyo', 'Beijing', 'Mumbai', 'Mexico City', 'Moscow'], 'promedios': [1.0, 14.0, 41.0, 1.0, 0.0]}) == {'ciudades': [  'Mumbai','Beijing', 'Tokyo','Mexico City', 'Moscow'], 'promedios': [ 41.0, 14.0,1.0, 1.0, 0.0]}
     assert ordenar_primeros_5({'ciudades': ['Tokyo', 'Beijing', 'Mumbai', 'Mexico City', 'Moscow'], 'promedios': [40.0, 22.0, 32.0, 99.0, 36.0]}) == {'ciudades': [  'Mexico City','Tokyo', 'Moscow','Mumbai', 'Beijing'], 'promedios': [ 99.0, 40.0,36.0, 32.0, 22.0]}
     
-def test_mayores_promedios():
-    assert mayores_promedios({'Paris':30.1,'Tokyo':10.4,'Seoul':5.20,'Beijing':4.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0}) == {'ciudades':['Paris','Mumbai','Tokyo','Bangkok','Seoul'],'promedios':[30.1,10.6,10.4,8.0,5.20]}
-    assert mayores_promedios({'Paris':0.1,'Tokyo':0.4,'Seoul':5.20,'Beijing':6.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0}) == {'ciudades':['Mumbai','Bangkok','Beijing','Seoul','Tokyo'],'promedios':[10.6,8.0,6.3,5.20,0.4]}
+def test_mayores_valoress():
+    assert mayores_promedios({'Paris':30.1,'Tokyo':10.4,'Seoul':5.20,'Beijing':4.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0},'promedios dust') == {'ciudades':['Paris','Mumbai','Tokyo','Bangkok','Seoul'],'promedios dust':[30.1,10.6,10.4,8.0,5.20]}
+    assert mayores_promedios({'Paris':0.1,'Tokyo':0.4,'Seoul':5.20,'Beijing':6.3,'Mumbai':10.6,'Bangkok':8.0,'Moscow':0.0},'promedios PM') == {'ciudades':['Mumbai','Bangkok','Beijing','Seoul','Tokyo'],'promedios PM':[10.6,8.0,6.3,5.20,0.4]}
 
 def test_filtrar_por_anio_y_suma():
     assert filtrar_por_anio_y_suma([{'Timestamp': (2026, 2, 15, 13), 'City': 'Mexico City', 'Latitude': 19.4326, 'Longitude': -99.1332, 'PM10_ug_m3': 25.3, 'PM2_5_ug_m3': 25.0,
