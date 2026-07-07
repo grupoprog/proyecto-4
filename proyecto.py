@@ -140,11 +140,11 @@ def ordenar_primeros_5(dic:dict[str:list],atributo:str) -> dict[str:list]:
     for i in range(4): #por cada elemento del diccionario viejo
         for j in range(len(dic_aux["Ciudades"])): # los comparo uno a uno con los del diccionario nuevo
             if dic[atributo][i] > dic_aux[atributo][j] and not insertado: # si alguno es mayor y no fue insertado
-                dic_aux[atributo].insert(j,dic[atributo][i]) #lo inserto en la posicion del numero determinado
+                dic_aux[atributo].insert(j,dic[atributo][i]) #lo inserto en la posicion del indice determinado
                 dic_aux["Ciudades"].insert(j,dic["Ciudades"][i])
                 insertado = True
         insertado = False
-        if dic["Ciudades"][i] not in dic_aux["Ciudades"]: # si ninguno se inserto en el bucle anterior (ninguno es mayor), lo inserto al final
+        if dic["Ciudades"][i] not in dic_aux["Ciudades"]: # si no se inserto en el bucle anterior (ninguno es mayor), lo inserto al final
             dic_aux[atributo].append(dic[atributo][i])
             dic_aux["Ciudades"].append(dic["Ciudades"][i])
     return dic_aux
@@ -160,21 +160,20 @@ def mayores_valores(ciudades_valores: dict[str:float], atributo:str) -> dict[str
     '''
     nuevo_dic = {"Ciudades":[], atributo:[]}
     cuenta = 0
-    flag_ordenado = False
-    for ciudad in ciudades_valores:
+    flag_ordenado = False #bandera cuando los primeros 5 estan ordenados
+    for ciudad in ciudades_valores: # se agregan los primeros 5 elementos del diccionario viejo al nuevo
         flag = False
-
-        if cuenta < 5 :
+        if cuenta < 5:
             nuevo_dic["Ciudades"].append(ciudad)
             nuevo_dic[atributo].append(ciudades_valores[ciudad])
             cuenta += 1
-            
+
         else:
             if not flag_ordenado: #en el primer else se deben ordenar los primeros 5
                 nuevo_dic = ordenar_primeros_5(nuevo_dic, atributo)
                 flag_ordenado=True
-            count = 0
-            for valor in nuevo_dic[atributo]:
+            count = 0 
+            for valor in nuevo_dic[atributo]: #por cada valor del diccionario viejo
                 if ciudades_valores[ciudad] > valor and not flag:
                     nuevo_dic[atributo] = nuevo_dic[atributo][0:count] + [ciudades_valores[ciudad]] + nuevo_dic[atributo][count:4]
                     nuevo_dic["Ciudades"] = nuevo_dic["Ciudades"][0:count] + [ciudad] + nuevo_dic["Ciudades"][count:4]
@@ -462,7 +461,8 @@ def ejecutar_pregunta4(tabla):
     Funcion encargada de el ingreso de datos del usuario y la renderización de los componentes de la pregunta 4.
     """
     st.title("¿Qué 5 ciudades entre las latitudes X y longitudes X tuvieron mayor cantidad de días con eventos peligrosos en 2025?")
-    st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior sea menor a la latitud superior y la longitud inferior sea menor a la longitud superior.")
+    st.write("Ingrese valores entre -90 y 90 para la latitud y entre -180 y 180 para la longitud. De manera que la latitud inferior\
+     sea menor a la latitud superior y la longitud inferior sea menor a la longitud superior.")
     latitud_inferior = st.slider("Latitud Inferior", -90, 90)
     latitud_superior = st.slider("Latitud Superior", -90, 90)
     longitud_inferior = st.slider("Longitud Inferior", -180, 180)
@@ -521,10 +521,12 @@ def filtrar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha:
 
     return promedio_ciudades
 
-def aux(dic_ciudad_prom: dict,dic: dict)-> dict[str:list[float]]:
-    '''dic_ciudad_prom es un diccionario de la forma {'ciudad':promedio de atributo dado} y 
-    dic es el diccionario que se va actualizando con cada promedio de componente pedido previamente en promedios_componentes_de_ciudades, 
-    va agregando un elemento a la lista (el promedio del componente dado)'''
+def aux(dic_ciudad_prom: dict, componente:str,dic: dict)-> dict[str:list[float]]:
+    '''toma un diccionario de la forma {'ciudad':promedio de atributo dado} y componente
+    y para cada ciudad en el diccionario recibido como argumento, va agregando un elemento a la lista (el promedio del componente dado)
+    por ejemplo, al filtrar el promedio de "PM10_ug_m3" en  "Diciembre 2025" de una tabla dada, tenemos que 
+    dic_ciudad_prom={"Delhi": 129.5, "Beijing": 164.4}
+    aux({"Delhi": 129.5, "Beijing": 164.4},"PM10_ug_m3")=={"Delhi":[129.5], "Beijing":[164.4]} '''
     for ciudad in dic_ciudad_prom:
         promedio = dic_ciudad_prom[ciudad]
 
@@ -549,7 +551,7 @@ def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[str
     
     for componente in componentes:
         promedios_componente = filtrar_promedio_ciudades_por_fecha(tabla,componente,fecha)
-        dic=aux(promedios_componente,dic)
+        dic=aux(promedios_componente,componente,dic)
         
     return dic
 
