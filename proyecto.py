@@ -195,21 +195,32 @@ def contar_apariciones_y_sumar_elementos(fila: dict, atributo: str, dict_list: d
     y se suma el elemento encontrado a la suma de los elementos.
 
     contar_apariciones_y_sumar_elementos(
-                                        {'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9, 
-                                        'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},
+                                        {'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 
+                                        'PM2_5_ug_m3': 36.9, 'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 
+                                        'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},
                                         "Dust_ug_m3",
                                         {},
                                         "Delhi",
                                         True
                                         ) = {"Delhi": [1,176.0]}
     contar_apariciones_y_sumar_elementos(
-                                        {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 'PM2_5_ug_m3': 154.6, 
-                                        'Carbon_Monoxide_ug_m3': 1388.0, 'Nitrogen_Dioxide_ug_m3': 35.9, 'Ozone_ug_m3': 11.0, 'Dust_ug_m3': 14.0, 'UV_Index': 0.45, 'European_AQI': 177, 'Hazardous_Event': 1},
+                                        {'Timestamp': (2025, 12, 7, 9), 'City': 'Beijing', 'Latitude': 39.9042, 'Longitude': 116.4074, 'PM10_ug_m3': 164.4, 
+                                        'PM2_5_ug_m3': 154.6, 'Carbon_Monoxide_ug_m3': 1388.0, 'Nitrogen_Dioxide_ug_m3': 35.9, 'Ozone_ug_m3': 11.0, 
+                                        'Dust_ug_m3': 14.0, 'UV_Index': 0.45, 'European_AQI': 177, 'Hazardous_Event': 1},
                                         "Dust_ug_m3",
                                         {"Delhi": [1,176.0]},
                                         "Beijing",
-                                        False 
-                                        ) = {"Delhi": [1,176.0]}
+                                        True 
+                                        ) = {"Delhi": [1,176.0], "Beijing": [1, 14.0]}
+    contar_apariciones_y_sumar_elementos(
+                                        {'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 'Longitude': 77.209, 'PM10_ug_m3': 129.5, 
+                                        'PM2_5_ug_m3': 36.9, 'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5, 'Ozone_ug_m3': 89.0, 
+                                        'Dust_ug_m3': 134.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},
+                                        "Dust_ug_m3",
+                                        {"Delhi": [1,176.0], "Beijing": [1, 14.0]},
+                                        "Delhi",
+                                        True
+                                        ) = {"Delhi": [2,310.0], "Beijing": [1, 14.0]}
     '''
     atributo_individual = fila[atributo]
     if condicion:

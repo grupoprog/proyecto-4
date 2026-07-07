@@ -74,8 +74,7 @@ def test_contar_apariciones_y_sumar_elementos():
     assert contar_apariciones_y_sumar_elementos({'Timestamp': (2025, 12, 15, 2), 'City': 'Delhi', 'Latitude': 28.6139, 
     'Longitude': 77.209, 'PM10_ug_m3': 129.5, 'PM2_5_ug_m3': 36.9,'Carbon_Monoxide_ug_m3': 635.0, 'Nitrogen_Dioxide_ug_m3': 16.5,
      'Ozone_ug_m3': 89.0, 'Dust_ug_m3': 176.0, 'UV_Index': 0.0, 'European_AQI': 159, 'Hazardous_Event': 1},'PM10_ug_m3',
-     {'Bogota': [2,19.17], 'Dhaka': [1,98.95], 'Riyadh': [3,1758.61],'Delhi':[6,2894.57]},'Delhi',2025==2025) \== 
-    {'Bogota': [2, 19.17], 'Dhaka': [1, 98.95], 'Riyadh': [3, 1758.61], 'Delhi': [7, 3024.07]}
+     {'Bogota': [2,19.17], 'Dhaka': [1,98.95], 'Riyadh': [3,1758.61],'Delhi':[6,2894.57]},'Delhi',2025==2025) == {'Bogota': [2, 19.17], 'Dhaka': [1, 98.95], 'Riyadh': [3, 1758.61], 'Delhi': [7, 3024.07]}
 
 
 
