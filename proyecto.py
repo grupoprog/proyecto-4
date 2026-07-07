@@ -133,16 +133,18 @@ def ordenar_primeros_5(dic:dict[str:list],atributo:str) -> dict[str:list]:
     Recibe un dic["ciudades":List[String], "promedios":List[Number]
     y produce el mismo tipo pero ordena simultaneamente ambas listas del diccionario
     """
-    dic_aux={"Ciudades":[dic["Ciudades"][0]], atributo:[dic[atributo][0]]}
-    dic["Ciudades"].pop(0)
-    dic[atributo].pop(0) 
-    for i in range(4):
-        for j in range(len(dic_aux["Ciudades"])):
-            if dic[atributo][i] > dic_aux[atributo][j]:
-                dic_aux[atributo].insert(j,dic[atributo][i])
+    dic_aux={"Ciudades":[dic["Ciudades"][0]], atributo:[dic[atributo][0]]} # pone los primeros elementos en el nuevo diccionario
+    dic["Ciudades"].pop(0) # los saca del diccionario viejo
+    dic[atributo].pop(0)
+    insertado = False 
+    for i in range(4): #por cada elemento del diccionario viejo
+        for j in range(len(dic_aux["Ciudades"])): # los comparo uno a uno con los del diccionario nuevo
+            if dic[atributo][i] > dic_aux[atributo][j] and not insertado: # si alguno es mayor y no fue insertado
+                dic_aux[atributo].insert(j,dic[atributo][i]) #lo inserto en la posicion del numero determinado
                 dic_aux["Ciudades"].insert(j,dic["Ciudades"][i])
-                break
-        if dic["Ciudades"][i] not in dic_aux["Ciudades"]:
+                insertado = True
+        insertado = False
+        if dic["Ciudades"][i] not in dic_aux["Ciudades"]: # si ninguno se inserto en el bucle anterior (ninguno es mayor), lo inserto al final
             dic_aux[atributo].append(dic[atributo][i])
             dic_aux["Ciudades"].append(dic["Ciudades"][i])
     return dic_aux
