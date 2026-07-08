@@ -130,6 +130,7 @@ def promedio(ciudades_filtradas: dict[str:list]) -> dict[str:float]:
     
     return ciudades_filtradas
 
+
 def ordenar_primeros_5(dic:dict[str:list],atributo:str) -> dict[str:list]:
     """
     Funcion auxiliar para ordenar las primeros 5 ciudades de la funcion mayores_promedios
@@ -275,6 +276,15 @@ def pregunta_1(tabla: list[dict], anio: int) -> dict[str: list]:
     return ciudades_promedios
 
 
+def ejecutar_pregunta1(tabla: list[dict]):
+    '''
+    Produce los componentes de la pregunta 1 en la pagina
+    '''
+
+    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
+    st.table(pregunta_1(tabla, 2025))
+
+
 def fecha_str(fecha: tuple) -> str:
     '''
     Fecha(tupla) -> Fecha("Mes año")
@@ -383,73 +393,16 @@ def filtrar_ubicacionesXmes(tabla: list[dict], fecha: str) -> list[dict]:
     return lista
 
 
-def ciudad_america(ciudad:str)->bool:
-    '''dada una ciudad devuelve True si es de America
-
-    ciudad_america('Mexico City') == True
-    ciudad_america('Tokyo') == False'''
-    lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
-    return ciudad in lista_ciudades_america
-
-
-def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
-    '''dada una tabla devuelve una version reducida que incluye los datos unicamente de las ciudades de América'''
-    nueva=[]
-    for fila in tabla:
-        if ciudad_america(fila['City']):
-            nueva.append(fila)
-    return nueva
-
-def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
-    '''
-    representaremos los "mayores promedios" de las ciudades como
-    dicccionarios de la forma {"ciudades": [nombres_ciudades], "Promedio": [promedios_pm25]}. 
-    Donde las "nombres_ciudades" son strings y "promedios_pm25" son float. Ambas listas 
-    son de 5 elementos
-
-    tabla int -> mayores promedios
-    
-    Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades de america on mayor promedio de PM 2.5.
-    '''
-    tabla_america = filtrar_ciudades_america(tabla)
-    ciudades_promedios = mayores_valores(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")),"Promedios")
-            
-    return ciudades_promedios
-
-
-def ejecutar_pregunta3(tabla: list[dict]):
-    '''
-    Produce los componentes de la pregunta 3 en la pagina
-    '''
-    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
-
-    dic= pregunta_3(tabla,2025)
-    x=dic["Ciudades"]
-    y=dic["Promedios"]
-    bar_colors = ['#FF3434', '#FF8059', '#FF9756','#F5AD6A','#FFEB7C']
-
-    fig, ax = plt.subplots()
-    ax.bar(x, y, color=bar_colors)
-
-    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
-    ax.set_xlabel("Ciudades")
-    ax.set_ylabel("Promedios")
-
-    st.pyplot(fig)
-
-
-def ejecutar_pregunta1(tabla: list[dict]):
-    '''
-    Produce los componentes de la pregunta 1 en la pagina
-    '''
-
-    st.title("¿Cuales fueron las 5 ciudades con mayor promedio de polvo en 2025?")
-    st.table(pregunta_1(tabla, 2025))
-
-
 def colores_ind_uv(list_colores: list, etiquetas: list, ncols: int = 5):
     '''
-    Realiza una descripcion de los significados de cada color de los indices UV
+    Realiza una descripcion de los significados de cada color de los indices UV en la pregunta 2. 
+    En base a la siguiente escala: 
+
+    Verde: 0 <= prom_UV < 1
+    Amarillo: 1 <= prom_UV < 2
+    Naranja: 2 <= prom_UV < 3
+    Rojo: 3 <= prom-UV < 4
+    Violeta: 4 <= prom_UV
     '''
     cell_width = 180
     cell_height = 22
@@ -516,12 +469,70 @@ def ejecutar_pregunta2(tabla: list[dict]):
         
     st.map(ubicaciones_promedios, latitude = "Latitude", longitude = "Longitude", color = "Color", size = 40000)
 
+
+def ciudad_america(ciudad:str)->bool:
+    '''dada una ciudad devuelve True si es de America
+
+    ciudad_america('Mexico City') == True
+    ciudad_america('Tokyo') == False'''
+    lista_ciudades_america=['New York','Chicago','Los Angeles','Mexico City','Bogota','Lima','Sao Paulo','Buenos Aires']
+    return ciudad in lista_ciudades_america
+
+
+def filtrar_ciudades_america(tabla:list[dict])->list[dict]:
+    '''dada una tabla devuelve una version reducida que incluye los datos unicamente de las ciudades de América'''
+    nueva=[]
+    for fila in tabla:
+        if ciudad_america(fila['City']):
+            nueva.append(fila)
+    return nueva
+
+
+def pregunta_3(tabla: list[dict], anio: int) -> dict[str: list]:
+    '''
+    representaremos los "mayores promedios" de las ciudades como
+    dicccionarios de la forma {"ciudades": [nombres_ciudades], "Promedio": [promedios_pm25]}. 
+    Donde las "nombres_ciudades" son strings y "promedios_pm25" son float. Ambas listas 
+    son de 5 elementos
+
+    tabla int -> mayores promedios
+    
+    Recibe una tabla y un año, y retorna un diccionario con las 5 ciudades de america on mayor promedio de PM 2.5.
+    '''
+    tabla_america = filtrar_ciudades_america(tabla)
+    ciudades_promedios = mayores_valores(promedio(filtrar_por_anio_y_suma(tabla_america,anio,"PM2_5_ug_m3")),"Promedios")
+            
+    return ciudades_promedios
+
+
+def ejecutar_pregunta3(tabla: list[dict]):
+    '''
+    Produce los componentes de la pregunta 3 en la pagina
+    '''
+    st.title("¿Cuáles son las 5 ciudades de América con mayor cantidad de PM2.5 en 2025?")
+
+    dic= pregunta_3(tabla,2025)
+    x=dic["Ciudades"]
+    y=dic["Promedios"]
+    bar_colors = ['#FF3434', '#FF8059', '#FF9756','#F5AD6A','#FFEB7C']
+
+    fig, ax = plt.subplots()
+    ax.bar(x, y, color=bar_colors)
+
+    ax.set_title("5 ciudades de América con mayor promedio de PM2.5 en 2025")
+    ax.set_xlabel("Ciudades")
+    ax.set_ylabel("Promedios")
+
+    st.pyplot(fig)
+
+
 def lat_long_validas(lat_sup:int,lat_inf:int,long_inf:int,long_sup:int, lat_ingresada:int, long_ingresada:int)-> bool:
     '''verifica si las coordenadas geogeraficas ingresadas por el usuario son correctas
     
     lat_long_validas(100,0,0,100,-5,500) == False
     lat_long_validas(100,0,0,100,50,20) == True'''
     return ((lat_inf < lat_ingresada) and (lat_sup > lat_ingresada) and (long_inf < long_ingresada) and (long_sup > long_ingresada))
+
 
 def filtrar_por_ubicacion(tabla,lat_sup:int,lat_inf:int,long_inf:int,long_sup:int)-> dict[str:int]:
     '''
@@ -550,6 +561,7 @@ def coordenadas_validas(lat_sup:float,lat_inf:float,long_sup:float,long_inf:floa
     '''
     return lat_inf<lat_sup and long_inf<long_sup
 
+
 def confirmar_datos(tabla,lat_sup:float,lat_inf:float,long_inf:float,long_sup:float):
     '''
     Esta función toma los valores de entrada del usuario de la pregunta 4, verifica que sean válidos y produce la tabla de valores,
@@ -560,7 +572,6 @@ def confirmar_datos(tabla,lat_sup:float,lat_inf:float,long_inf:float,long_sup:fl
     else:
         st.write("Valores inválidos.")
         
-
 
 def ejecutar_pregunta4(tabla):
     """
@@ -627,7 +638,8 @@ def filtrar_promedio_ciudades_por_fecha(tabla: list[dict], atributo: str, fecha:
 
     return promedio_ciudades
 
-def aux(dic_ciudad_prom: dict, componente:str,dic: dict)-> dict[str:list[float]]:
+
+def aux(dic_ciudad_prom: dict,dic: dict)-> dict[str:list[float]]:
     '''toma un diccionario de la forma {'ciudad':promedio de atributo dado} y componente
     y para cada ciudad en el diccionario recibido como argumento, va agregando un elemento a la lista (el promedio del componente dado)
     por ejemplo, al filtrar el promedio de "PM10_ug_m3" en  "Diciembre 2025" de una tabla dada, tenemos que 
@@ -643,6 +655,7 @@ def aux(dic_ciudad_prom: dict, componente:str,dic: dict)-> dict[str:list[float]]
 
     return dic
 
+
 def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[str:list[float]]:
     '''
     tabla fecha -> {ciudad: [promedios]}
@@ -657,7 +670,7 @@ def promedios_componentes_de_ciudades(tabla: list[dict], fecha: str) -> dict[str
     
     for componente in componentes:
         promedios_componente = filtrar_promedio_ciudades_por_fecha(tabla,componente,fecha)
-        dic=aux(promedios_componente,componente,dic)
+        dic=aux(promedios_componente,dic)
         
     return dic
 
@@ -712,6 +725,7 @@ def promedios_monoxido_por_mes(ciudad:str,tabla:list[dict])->list[float]:
         l.append(prom_monoxido_por_mes)
     return l
 
+
 def pregunta_6(tabla: list[dict])->dict[str:list[float]]:
     """
     Recibe una tabla y un atributo y produce un diccionario de la forma {ciudad:[prom 01/25,prom 02/25, ... ,prom 05/26]}
@@ -722,6 +736,7 @@ def pregunta_6(tabla: list[dict])->dict[str:list[float]]:
     for ciudad in ciudades:
         nuevo_dic[ciudad]=promedios_monoxido_por_mes(ciudad,tabla)
     return nuevo_dic
+
 
 def ejecutar_pregunta6(tabla: list[dict]):
     '''Produce los componentes de la pregunta 6 en la pagina'''
@@ -762,6 +777,7 @@ def ejecutar_programa(tabla: list[dict]):
         ejecutar_pregunta5(tabla)
     if preg_6.open:
         ejecutar_pregunta6(tabla)
+        
 
 def main():
     #python -m streamlit run proyecto.py para ejecutar la aplicación
